@@ -1,10 +1,15 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import {AppInitializer} from './app.initializer';
+import { UserController } from './WEB/user.controller';
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
+
+const appInitializer = new AppInitializer(process.env);
+appInitializer.init();
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
@@ -13,3 +18,6 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
+
+const userController = new UserController();
+app.get('/users', (req: Request, res: Response) => userController.getAllUsers(req, res));
