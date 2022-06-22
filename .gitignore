@@ -1,0 +1,7 @@
+/node_modules
+/dist
+
+# certs
+cert.pem
+client.csr
+key.pem
