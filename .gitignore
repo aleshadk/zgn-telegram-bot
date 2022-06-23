@@ -5,3 +5,4 @@
 cert.pem
 client.csr
 key.pem
+.env

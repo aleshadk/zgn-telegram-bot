@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import { TelegramBot } from './Telegram/Temp';
 
 interface IEnv {
     PORT: number;
     MONGO: string;
+    TELEGRAM_BOT_TOKEN: string;
 }
 
 const MONGO_OPTIONS = {
@@ -21,12 +23,25 @@ export class AppInitializer {
     }
 
     public async init(): Promise<void> {
+        await Promise.all([
+            this.initMongo(),
+            this.initTelegram()
+        ]);
+    } 
+
+    private async initMongo(): Promise<void> {
         try {
             await mongoose.connect(this.env.MONGO, MONGO_OPTIONS);
             this.log('MongoDb connected');
         } catch (error) {
             this.log(`ERROR: MongoDB not connected ${error}`);
         }
+    } 
+
+    private async initTelegram(): Promise<void> {
+        new TelegramBot(this.env.TELEGRAM_BOT_TOKEN);
+        this.log('TelegramBot connected');
+
     } 
 
     private log(message: string): void {

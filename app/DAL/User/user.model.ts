@@ -1,15 +1,28 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IUser extends Document {
-    name: string;
+export interface ICreateUserModel {
+    firstName: string,
+    telegramId: number,
+    lastName?: string,
+    telegramName?: string,
+    isAdmin: boolean,
+    phone?: string,
+}
+export interface IUser extends Document, ICreateUserModel {}
+export interface IGetUserModel extends Partial<ICreateUserModel> {}
+export interface IUpdateUserModel {
+    telegramId: number;
     phone: string;
-    isAdmin: boolean;
 }
 
 const UserSchema: Schema = new Schema({
-    title: { type: String, required: true },
-    phone: { type: String, required: true },
-    isAdmin: { type: Boolean, required: true },
+
+    telegramId: { type: Number, required: true },
+    telegramName: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    phone: { type: String },
+    isAdmin: { type: Boolean },
 },
     {
         timestamps: true
