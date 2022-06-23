@@ -22,6 +22,7 @@ export class UserRepository {
 
     public createUser(model: ICreateUserModel): Promise<IUser> {
         const user = new UserModel(model);
+        user._id;
 
         return new Promise<IUser>((resolve, reject) => {
             user.save(error => {

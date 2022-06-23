@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export const __user_schema_name = 'user';
 export interface ICreateUserModel {
     firstName: string,
     telegramId: number,
@@ -29,4 +30,4 @@ const UserSchema: Schema = new Schema({
     }
 )
 
-export const UserModel = mongoose.model<IUser>('user', UserSchema);
+export const UserModel = mongoose.model<IUser>(__user_schema_name, UserSchema);
