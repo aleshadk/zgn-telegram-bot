@@ -5,6 +5,7 @@ import { isValidPhone } from '../Services/PhoneService';
 import { BookRehearsalHandler } from './handlers/BookRehearsalHandler';
 import { GetAvailableRehearsalDuractionHandler } from './handlers/GetAvailableRehearsalDuractionHandler';
 import { GetAvailableRehearsalStartTimeHandler } from './handlers/GetAvailableRehearsalStartTimeHandler';
+import { GetMyRehearsalsHandler } from './handlers/GetMyRehearsalsHandler';
 import { StartScheduleHandler } from './handlers/StartSchedulingHandler';
 
 export class TelegramBot { // TODO: rename class
@@ -39,10 +40,10 @@ export class TelegramBot { // TODO: rename class
             this.handleMessageFromUserWithoutPhone(ctx);
         });
 
-        bot.command("inline", async (ctx) => {
+        bot.command('start_booking', async (ctx) => {
             const daysToSchedule = new StartScheduleHandler().handle();
 
-            await ctx.reply("Выбери нужный день", {
+            await ctx.reply('Выбери день репетиции', {
                 reply_markup: {
                     inline_keyboard: [
                         ...daysToSchedule.map(x => {
@@ -53,6 +54,19 @@ export class TelegramBot { // TODO: rename class
                     ]
                 }
             });
+        });
+
+        bot.command('get_my_rehearsals', async ctx => {
+            const result = await new GetMyRehearsalsHandler().handle(ctx.from?.id!);
+
+            if (result.length === 0) {
+                ctx.reply('У тебя нет активных репетиций 😱');
+                return;
+            }
+
+            const response = `У тебя есть вот такие репетиции: \n\n${result.map(x => x.label).join('\n')}`;
+
+            ctx.reply(response);
         });
 
         bot.action(/datechosen+/, (ctx) => {
@@ -103,7 +117,6 @@ export class TelegramBot { // TODO: rename class
 
             ctx.reply(result.message);
         });
-
 
         bot.on('text', async (ctx) => {
             const user = await this.userRepository.getUser({ telegramId: ctx.from.id });

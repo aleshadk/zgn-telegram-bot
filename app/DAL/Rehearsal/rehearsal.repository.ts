@@ -1,5 +1,6 @@
 import { formatISO } from 'date-fns';
 import { IRehearsal, IRehearsalSaveModel, RehearsalModel } from './rehearsal.model';
+import { IUser } from '../User/user.model';
 
 export class RehearsalRepository {
     public getAllRehearsals(): Promise<IRehearsal[]> {
@@ -20,6 +21,15 @@ export class RehearsalRepository {
                 resolve(rehearsal);
             })
         })
+    }
+
+    public async getUserActiveRehearsals(user: IUser): Promise<IRehearsal[]> {
+        return await RehearsalModel.find({
+            createdBy: user,
+            endTime: {
+                $gt: formatISO(new Date())
+            }
+        });
     }
 
     public async getRehearsalsWhereStartTimeBetween(from: Date, to: Date): Promise<IRehearsal[]> {

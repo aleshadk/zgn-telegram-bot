@@ -1,7 +1,6 @@
 import { UserRepository } from '../DAL/User/user.repository';
 import { Request, Response } from 'express';
 
-
 export class UserController {
     private readonly userRepository = new UserRepository();
 
