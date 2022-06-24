@@ -51,7 +51,7 @@ export class BookRehearsalHandler {
         return startTime;
     }
 
-    private calculateEndTime(startTime: Date, duration: string;): Date {
+    private calculateEndTime(startTime: Date, duration: string): Date {
         return addHours(startTime, parseInt(duration));
     }
 

@@ -32,7 +32,7 @@ export class RehearsalRepository {
                         startTime: { $gte: formatISO(from), $lt: formatISO(to) }
                     }, 
                     {
-                        endTime: { $gte: formatISO(from), $lt: formatISO(to) },
+                        endTime: { $gt: formatISO(from), $lt: formatISO(to) },
                     }
                 ] 
                 
@@ -40,7 +40,4 @@ export class RehearsalRepository {
         })
     }
 
-    // TODO: какая-то хуйня
-    public getRehearsalBetweenDates(from: Date, to: Date): void {
-    }
 }
