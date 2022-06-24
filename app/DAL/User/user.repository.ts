@@ -20,6 +20,10 @@ export class UserRepository {
         
     }
 
+    public async getAdminUsers(): Promise<IUser[]> {
+        return await UserModel.find({isAdmin: true});
+    }
+
     public createUser(model: ICreateUserModel): Promise<IUser> {
         const user = new UserModel(model);
         user._id;

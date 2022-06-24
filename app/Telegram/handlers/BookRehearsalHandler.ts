@@ -1,11 +1,13 @@
 import { addHours, formatISO } from 'date-fns';
+
+import { IRehearsal, IRehearsalSaveModel } from '../../DAL/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
 import { UserRepository } from '../../DAL/User/user.repository';
-import { IRehearsalSaveModel } from '../../DAL/Rehearsal/rehearsal.model';
+import { formatRehearsalDateWithDuration } from '../../Services/DateUtils';
 
 interface IHandlerResult {
-    success: boolean;
     message: string;
+    rehearsal: IRehearsal | null;
 }
 
 export class BookRehearsalHandler {
@@ -16,7 +18,10 @@ export class BookRehearsalHandler {
     public async handle(data: {userTelegramId: number, rehearsalDate: string, startTime: string, duration: string}): Promise<IHandlerResult> {
         const user = await this.userRepository.getUser({telegramId: data.userTelegramId});
         if (!user) {
-            return {success: false, message: 'Тебя нет в нашей базе, попробуй написать /start и зарегистрироваться'};
+            return {
+                message: 'Тебя нет в нашей базе, попробуй написать /start и зарегистрироваться',
+                rehearsal: null,
+            };
         }
 
         const startTime = this.calculateStartTime(data.rehearsalDate, data.startTime);
@@ -26,8 +31,8 @@ export class BookRehearsalHandler {
 
         if (!hasFreeSlot) {
             return {
-                success: false,
-                message: `Репетиция не забронирована: этот слот занят`
+                message: `Репетиция не забронирована: этот слот занят`,
+                rehearsal: null
             }
         }
 
@@ -38,8 +43,11 @@ export class BookRehearsalHandler {
             isConfirmed: false
         }
 
-        await this.rehearsalRepository.createRehearsal(saveModel);
-        return {success: true, message: `Успешный успех, репетиция с ${formatISO(startTime)} до ${formatISO(endTime)} забронирована 🤘`};
+        const rehearsal = await this.rehearsalRepository.createRehearsal(saveModel);
+        return {
+            rehearsal,
+            message: `Успешный успех, ждём от админов подтверждения репетиции ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} 🤘`
+        };
     }
 
     private calculateStartTime(rehearsalDate: string, rehearsalStartTime: string): Date {

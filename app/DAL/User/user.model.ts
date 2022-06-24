@@ -4,6 +4,7 @@ export const __user_schema_name = 'user';
 export interface ICreateUserModel {
     firstName: string,
     telegramId: number,
+    telegramChatId: number,
     lastName?: string,
     telegramName?: string,
     isAdmin: boolean,
@@ -19,6 +20,7 @@ export interface IUpdateUserModel {
 const UserSchema: Schema = new Schema({
 
     telegramId: { type: Number, required: true },
+    telegramChatId: { type: Number, required: true },
     telegramName: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },

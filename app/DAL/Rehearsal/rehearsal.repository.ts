@@ -23,6 +23,14 @@ export class RehearsalRepository {
         })
     }
 
+    public async getRehearsalById(rehearsalId: string): Promise<IRehearsal | null> {
+        return await RehearsalModel.findById(rehearsalId);
+    }
+
+    public async confirmRehearsal(rehearsalId: string): Promise<IRehearsal | null> {
+        return await RehearsalModel.findByIdAndUpdate(rehearsalId, {isConfirmed: true});
+    }
+
     public async getUserActiveRehearsals(user: IUser): Promise<IRehearsal[]> {
         return await RehearsalModel.find({
             createdBy: user,

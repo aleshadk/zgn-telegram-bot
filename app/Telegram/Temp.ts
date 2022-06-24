@@ -3,10 +3,12 @@ import { Update } from 'typegram';
 import { UserRepository } from '../DAL/User/user.repository';
 import { isValidPhone } from '../Services/PhoneService';
 import { BookRehearsalHandler } from './handlers/BookRehearsalHandler';
+import { ConfirmRehearsalHandler } from './handlers/ConfirmRehearsalHandler';
 import { GetAvailableRehearsalDuractionHandler } from './handlers/GetAvailableRehearsalDuractionHandler';
 import { GetAvailableRehearsalStartTimeHandler } from './handlers/GetAvailableRehearsalStartTimeHandler';
 import { GetMyRehearsalsHandler } from './handlers/GetMyRehearsalsHandler';
 import { StartScheduleHandler } from './handlers/StartSchedulingHandler';
+import { SendRehearsalConfirmMessageHandler } from './notification_handlers/SendRehearsalConfirmMessageHandler';
 
 export class TelegramBot { // TODO: rename class
     private readonly userRepository = new UserRepository();
@@ -33,6 +35,7 @@ export class TelegramBot { // TODO: rename class
                     lastName: ctx.from.last_name,
                     telegramId: ctx.from.id,
                     telegramName: ctx.from.username,
+                    telegramChatId: ctx.chat.id
                 });
             }
 
@@ -116,6 +119,18 @@ export class TelegramBot { // TODO: rename class
             });
 
             ctx.reply(result.message);
+            if (result.rehearsal) {
+                await new SendRehearsalConfirmMessageHandler().handle(bot, result.rehearsal);
+            }
+        });
+
+        bot.action(/rehearsal_confirmed+/, async ctx => {
+            const rehearsalId = ctx.match.input.replace('rehearsal_confirmed__', '');
+            new ConfirmRehearsalHandler().handleConfirm(ctx, bot, rehearsalId);
+        });
+
+        bot.action(/rehearsal_rejected+/, async ctx => {
+            const rehearsalId = parseInt(ctx.match.input.replace('rehearsal_rejected__', ''));
         });
 
         bot.on('text', async (ctx) => {
