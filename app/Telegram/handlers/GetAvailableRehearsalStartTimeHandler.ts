@@ -1,32 +1,33 @@
 import { add, addDays, addHours, formatISO, nextDay } from 'date-fns';
 import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
+import { ZAGON_CONFIG } from '../../zagon.config';
 
 const ruLocale = require('date-fns/locale/ru')
 
 export class GetAvailableRehearsalStartTimeHandler {
     private rehearsalRepository = new RehearsalRepository(); 
 
-    private readonly availableRehearsalStartTime = [
-        '10:00',
-        '11:00',
-        '12:00',
-        '13:00',
-        '14:00',
-        '15:00',
-        '16:00',
-        '17:00',
-    ];
-
     public async handle(data: {rehearsalDate: string, duration: string}): Promise<string[]> {
         const rehearsalDate = new Date(parseInt(data.rehearsalDate));
+        const duration = parseInt(data.duration);
+
         const nextDayAfterRehearsalStart = addDays(rehearsalDate, 1);
         const maxPossibleRehearsalEndTIme = addHours(nextDayAfterRehearsalStart, parseInt(data.duration) - 1);
 
         const rehearsals = await this.rehearsalRepository.getRehearsalsWhereStartTimeBetween(rehearsalDate, maxPossibleRehearsalEndTIme);
 
-        const slots = this.availableRehearsalStartTime.filter(slot => {
+        const availableSlots: string[] = [];
+
+        for (let startHour = ZAGON_CONFIG.START_HOUR; startHour <= ZAGON_CONFIG.END_HOUR; startHour++) {
+            const currentSlotEndTime = startHour + duration;
+            if (currentSlotEndTime > ZAGON_CONFIG.END_HOUR) {
+                continue;
+            }
+
+            const slot = `${startHour}:00`;
+
             const start = this.getSlotStartTime(rehearsalDate, slot);
-            const end = this.getSlotEndTime(start, data.duration);
+            const end = this.getSlotEndTime(start, duration);
 
             const hasConflictRehearsal = rehearsals.some(r => {
                 // Если есть репетиция, которая начинается позже начала слота, но при этом не раньше конца слота, то слот недоступен
@@ -55,11 +56,13 @@ export class GetAvailableRehearsalStartTimeHandler {
             });
 
             const isValidSlot = !hasConflictRehearsal;
-            return isValidSlot;
-        })
+            
+            if (isValidSlot) {
+                availableSlots.push(slot);
+            }
+        }
 
-
-        return slots;
+        return availableSlots;
     }
 
     private getSlotStartTime(date: Date, startTime: string): Date {
@@ -72,7 +75,7 @@ export class GetAvailableRehearsalStartTimeHandler {
         return slotStartTime;
     }
 
-    private getSlotEndTime(slotStartTime: Date, duration: string): Date {
-        return addHours(slotStartTime, parseInt(duration));
+    private getSlotEndTime(slotStartTime: Date, duration: number): Date {
+        return addHours(slotStartTime, duration);
     }
 }
