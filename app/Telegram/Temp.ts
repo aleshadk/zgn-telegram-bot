@@ -72,17 +72,17 @@ export class TelegramBot { // TODO: rename class
             });
         });
 
-        bot.action(/durationchosen+/, (ctx) => {
+        bot.action(/durationchosen+/, async (ctx) => {
             const data = ctx.match.input.replace('durationchosen__', '');
-            const [date, duration] = data.split('__');
+            const [rehearsalDate, duration] = data.split('__');
 
-            const slots = new GetAvailableRehearsalStartTimeHandler().handle();
+            const slots = await new GetAvailableRehearsalStartTimeHandler().handle({rehearsalDate, duration});
             ctx.reply("Выбери время начала репетиции", {
                 reply_markup: {
                     inline_keyboard: [
                         ...slots.map(x => {
                             return [
-                                Markup.button.callback(`${x}`, `slotchosen__${date}__${duration}__${x}`, true)
+                                Markup.button.callback(`${x}`, `slotchosen__${rehearsalDate}__${duration}__${x}`, true)
                             ]
                         })
                     ]
@@ -94,22 +94,18 @@ export class TelegramBot { // TODO: rename class
             const data = ctx.match.input.replace('slotchosen__', '');
             const [rehearsalDate, duration, startTime] = data.split('__');
 
-            const isSuccess = await new BookRehearsalHandler().handle({
+            const result = await new BookRehearsalHandler().handle({
                 duration,
                 rehearsalDate,
                 startTime,
                 userTelegramId: ctx.from?.id!
             });
 
-            const text = isSuccess ? 'Круто' : 'Лох';
-
-            ctx.reply(text);
+            ctx.reply(result.message);
         });
 
 
         bot.on('text', async (ctx) => {
-            console.log('received');
-
             const user = await this.userRepository.getUser({ telegramId: ctx.from.id });
 
             if (!user?.phone) {

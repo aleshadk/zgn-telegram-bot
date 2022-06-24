@@ -1,11 +1,9 @@
-import { ICreateUserModel, IUser } from '../User/user.model';
+import { formatISO } from 'date-fns';
 import { IRehearsal, IRehearsalSaveModel, RehearsalModel } from './rehearsal.model';
 
 export class RehearsalRepository {
     public getAllRehearsals(): Promise<IRehearsal[]> {
         const result = RehearsalModel.find().exec();
-        result.catch(e => console.log(e));
-
         return result;
     }
 
@@ -15,7 +13,6 @@ export class RehearsalRepository {
         return new Promise<IRehearsal>((resolve, reject) => {
             rehearsal.save(error => {
                 if (error) {
-                    console.log(error);
                     reject();
                     return;
                 }
@@ -23,5 +20,27 @@ export class RehearsalRepository {
                 resolve(rehearsal);
             })
         })
+    }
+
+    public async getRehearsalsWhereStartTimeBetween(from: Date, to: Date): Promise<IRehearsal[]> {
+        // TODO: можно переписать на метод exists
+        return new Promise<IRehearsal[]>((resolve) => {
+            
+            RehearsalModel.find({
+                $or: [
+                    {
+                        startTime: { $gte: formatISO(from), $lt: formatISO(to) }
+                    }, 
+                    {
+                        endTime: { $gte: formatISO(from), $lt: formatISO(to) },
+                    }
+                ] 
+                
+            }).then(result => resolve(result))
+        })
+    }
+
+    // TODO: какая-то хуйня
+    public getRehearsalBetweenDates(from: Date, to: Date): void {
     }
 }

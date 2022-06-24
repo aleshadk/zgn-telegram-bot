@@ -1,15 +1,11 @@
-import startOfDay from 'date-fns/startOfDay';
-import format from 'date-fns/format';
-import { addDays, addHours, formatISO, parseISO, setHours, setMinutes } from 'date-fns';
+import { addHours, formatISO } from 'date-fns';
 import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
 import { UserRepository } from '../../DAL/User/user.repository';
-import { IUser } from '../../DAL/User/user.model';
 import { IRehearsalSaveModel } from '../../DAL/Rehearsal/rehearsal.model';
-const ruLocale = require('date-fns/locale/ru')
 
-interface IDateValue {
-    label: string;
-    value: Date;
+interface IHandlerResult {
+    success: boolean;
+    message: string;
 }
 
 export class BookRehearsalHandler {
@@ -17,18 +13,23 @@ export class BookRehearsalHandler {
     private readonly userRepository = new UserRepository;;
 
 
-    public async handle(data: {userTelegramId: number, rehearsalDate: string, startTime: string, duration: string}): Promise<boolean> {
-        const user = await this.getUser(data.userTelegramId);
+    public async handle(data: {userTelegramId: number, rehearsalDate: string, startTime: string, duration: string}): Promise<IHandlerResult> {
+        const user = await this.userRepository.getUser({telegramId: data.userTelegramId});
         if (!user) {
-            return false;
+            return {success: false, message: 'Тебя нет в нашей базе, попробуй написать /start и зарегистрироваться'};
         }
 
-        const startTime = new Date(parseInt(data.rehearsalDate));
-        const [startHour, startMinute] = data.startTime.split(':');
-        startTime.setHours(parseInt(startHour));
-        startTime.setMinutes(parseInt(startMinute));
+        const startTime = this.calculateStartTime(data.rehearsalDate, data.startTime);
+        const endTime = this.calculateEndTime(startTime, data.duration);
 
-        const endTime = addHours(startTime, parseInt(data.duration));
+        const hasFreeSlot = await this.hasFreeSlot(startTime, endTime);
+
+        if (!hasFreeSlot) {
+            return {
+                success: false,
+                message: `Репетиция не забронирована: этот слот занят`
+            }
+        }
 
         const saveModel: IRehearsalSaveModel = {
             createdBy: user,
@@ -38,18 +39,24 @@ export class BookRehearsalHandler {
         }
 
         await this.rehearsalRepository.createRehearsal(saveModel);
-        console.log(startTime, formatISO(startTime));
-        console.log(endTime, formatISO(endTime));
-        return true;
+        return {success: true, message: `Успешный успех, репетиция с ${formatISO(startTime)} до ${formatISO(endTime)} забронирована 🤘`};
     }
 
-    private async getUser(telegramId: number): Promise<IUser | null> {
-        try {
-            return await this.userRepository.getUser({telegramId}) || null;
-        } catch (e) {
-            return null;
-        }
+    private calculateStartTime(rehearsalDate: string, rehearsalStartTime: string): Date {
+        const startTime = new Date(parseInt(rehearsalDate));
+        const [startHour, startMinute] = rehearsalStartTime.split(':');
+        startTime.setHours(parseInt(startHour));
+        startTime.setMinutes(parseInt(startMinute));
+
+        return startTime;
     }
 
-    private addTo
+    private calculateEndTime(startTime: Date, duration: string;): Date {
+        return addHours(startTime, parseInt(duration));
+    }
+
+    private async hasFreeSlot(startTime: Date, endTime: Date): Promise<boolean> {
+        const rehearsals = await this.rehearsalRepository.getRehearsalsWhereStartTimeBetween(startTime, endTime);
+        return rehearsals.length === 0;
+    }
 }
