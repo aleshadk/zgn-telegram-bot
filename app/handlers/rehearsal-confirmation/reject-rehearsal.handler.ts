@@ -6,7 +6,7 @@ import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository
 import { IUser } from '../../Domain/User/user.model';
 import { UserRepository } from '../../Domain/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
-import { NotifyAdminAboutRehearsalStatusChangeHandler } from '../notification_handlers/NotifyAdminAboutRehearsalStatusChangeHandler';
+import { NotifyAdminAboutRehearsalStatusChangeHandler } from './notify-admin-about-rehearsal-status-change.handler';
 
 export class RejectRehearsalHandler {
     private readonly rehearsalRepository = new RehearsalRepository;;

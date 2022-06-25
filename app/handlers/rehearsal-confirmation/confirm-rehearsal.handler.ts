@@ -1,12 +1,12 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
-import { IRehearsal, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 
+import { IRehearsal, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { IUser } from '../../Domain/User/user.model';
 import { UserRepository } from '../../Domain/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
-import { NotifyAdminAboutRehearsalStatusChangeHandler } from '../notification_handlers/NotifyAdminAboutRehearsalStatusChangeHandler';
+import { NotifyAdminAboutRehearsalStatusChangeHandler } from './notify-admin-about-rehearsal-status-change.handler';
 
 export class ConfirmRehearsalHandler {
     private readonly rehearsalRepository = new RehearsalRepository;;

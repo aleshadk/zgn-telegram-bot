@@ -7,7 +7,7 @@ import { UserRepository } from '../../Domain/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 
 
-export class SendRehearsalConfirmMessageHandler {
+export class SendRehearsalConfirmationMessageToAdminsHandler {
     private readonly rehearsalRepository = new RehearsalRepository;;
     private readonly userRepository = new UserRepository;
 

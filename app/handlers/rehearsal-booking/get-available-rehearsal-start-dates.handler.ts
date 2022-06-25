@@ -1,5 +1,6 @@
+import { addDays, startOfToday } from 'date-fns';
 import format from 'date-fns/format';
-import { addDays, formatISO, startOfToday } from 'date-fns';
+
 const ruLocale = require('date-fns/locale/ru')
 
 
@@ -8,7 +9,7 @@ interface IDateValue {
     value: Date;
 }
 
-export class StartScheduleHandler {
+export class GetAvailableRehearsalStateDatesHandler {
     private readonly availableDaysCountToScheduleExceptTodayAndTomorow = 5;
 
 

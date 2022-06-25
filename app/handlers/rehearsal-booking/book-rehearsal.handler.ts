@@ -1,4 +1,4 @@
-import { addHours, formatISO, isPast } from 'date-fns';
+import { addHours, isPast } from 'date-fns';
 
 import { IRehearsal, IRehearsalSaveModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';

@@ -1,9 +1,10 @@
-import { add, addDays, addHours, formatISO, isToday, nextDay } from 'date-fns';
+import { addDays, addHours, isToday } from 'date-fns';
+
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { getNextHour } from '../../utils/dateUtils';
 import { ZAGON_CONFIG } from '../../zagon.config';
 
-export class GetAvailableRehearsalStartTimeHandler {
+export class GetAvailableRehearsalStartTimeSlotsHandler {
     private rehearsalRepository = new RehearsalRepository(); 
 
     public async handle(data: {rehearsalDate: string, duration: string}): Promise<string[]> {

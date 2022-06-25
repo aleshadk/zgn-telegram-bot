@@ -1,15 +1,23 @@
-import { Context, Markup, Telegraf } from 'telegraf';
-import { Update } from 'typegram';
+import { Context, Markup } from 'telegraf';
+
 import { UserRepository } from '../Domain/User/user.repository';
+import { BookRehearsalHandler } from '../handlers/rehearsal-booking/book-rehearsal.handler';
+import {
+    GetAvailableRehearsalDuractionHandler,
+} from '../handlers/rehearsal-booking/get-available-rehearsal-duration.handler';
+import {
+    GetAvailableRehearsalStateDatesHandler,
+} from '../handlers/rehearsal-booking/get-available-rehearsal-start-dates.handler';
+import {
+    GetAvailableRehearsalStartTimeSlotsHandler,
+} from '../handlers/rehearsal-booking/get-available-rehearsal-start-time-slots.handler';
+import { ConfirmRehearsalHandler } from '../handlers/rehearsal-confirmation/confirm-rehearsal.handler';
+import { RejectRehearsalHandler } from '../handlers/rehearsal-confirmation/reject-rehearsal.handler';
+import {
+    SendRehearsalConfirmationMessageToAdminsHandler,
+} from '../handlers/rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
+import { GetMyRehearsalsHandler } from '../handlers/user/get-my-rehearsals.handler';
 import { isValidPhone } from '../utils/phoneUtils';
-import { BookRehearsalHandler } from './handlers/BookRehearsalHandler';
-import { ConfirmRehearsalHandler } from './handlers/ConfirmRehearsalHandler';
-import { GetAvailableRehearsalDuractionHandler } from './handlers/GetAvailableRehearsalDuractionHandler';
-import { GetAvailableRehearsalStartTimeHandler } from './handlers/GetAvailableRehearsalStartTimeHandler';
-import { GetMyRehearsalsHandler } from './handlers/GetMyRehearsalsHandler';
-import { RejectRehearsalHandler } from './handlers/RejectRehearsalHandler';
-import { StartScheduleHandler } from './handlers/StartSchedulingHandler';
-import { SendRehearsalConfirmMessageHandler } from './notification_handlers/SendRehearsalConfirmMessageHandler';
 import { telegramBot } from './telegramBot';
 
 export class TelegramBot { // TODO: rename class
@@ -45,7 +53,7 @@ export class TelegramBot { // TODO: rename class
         });
 
         telegramBot.command('start_booking', async (ctx) => {
-            const daysToSchedule = new StartScheduleHandler().handle();
+            const daysToSchedule = new GetAvailableRehearsalStateDatesHandler().handle();
 
             await ctx.reply('Выбери день репетиции', {
                 reply_markup: {
@@ -96,7 +104,7 @@ export class TelegramBot { // TODO: rename class
             const data = ctx.match.input.replace('durationchosen__', '');
             const [rehearsalDate, duration] = data.split('__');
 
-            const slots = await new GetAvailableRehearsalStartTimeHandler().handle({rehearsalDate, duration});
+            const slots = await new GetAvailableRehearsalStartTimeSlotsHandler().handle({rehearsalDate, duration});
 
             if (slots.length === 0) {
                 ctx.reply('В этот день нет подходящих по длительности слотов :(');
@@ -130,7 +138,7 @@ export class TelegramBot { // TODO: rename class
 
             ctx.reply(result.message);
             if (result.rehearsal) {
-                await new SendRehearsalConfirmMessageHandler().handle(telegramBot, result.rehearsal);
+                await new SendRehearsalConfirmationMessageToAdminsHandler().handle(telegramBot, result.rehearsal);
             }
         });
 
