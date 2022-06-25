@@ -1,6 +1,6 @@
 import { add, addDays, addHours, formatISO, isToday, nextDay } from 'date-fns';
-import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
-import { getNextHour } from '../../Services/DateUtils';
+import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
+import { getNextHour } from '../../utils/dateUtils';
 import { ZAGON_CONFIG } from '../../zagon.config';
 
 export class GetAvailableRehearsalStartTimeHandler {

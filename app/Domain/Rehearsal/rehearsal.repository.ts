@@ -1,7 +1,6 @@
 import { formatISO } from 'date-fns';
 import { IRehearsal, IRehearsalSaveModel, RehearsalModel, RehearsalStatus } from './rehearsal.model';
 import { IUser } from '../User/user.model';
-import { RehearsalController } from '../../WEB/rehearsal.controller';
 
 export class RehearsalRepository {
     public getAllRehearsals(): Promise<IRehearsal[]> {

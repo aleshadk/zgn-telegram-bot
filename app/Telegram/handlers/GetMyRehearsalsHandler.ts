@@ -1,6 +1,6 @@
-import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
-import { UserRepository } from '../../DAL/User/user.repository';
-import { formatRehearsalDateWithDuration } from '../../Services/DateUtils';
+import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
+import { UserRepository } from '../../Domain/User/user.repository';
+import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 
 
 interface IGetMyRehearsalsResponse {

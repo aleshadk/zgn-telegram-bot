@@ -1,10 +1,10 @@
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 
-import { IRehearsal } from '../../DAL/Rehearsal/rehearsal.model';
-import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
-import { UserRepository } from '../../DAL/User/user.repository';
-import { formatRehearsalDateWithDuration } from '../../Services/DateUtils';
+import { IRehearsal } from '../../Domain/Rehearsal/rehearsal.model';
+import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
+import { UserRepository } from '../../Domain/User/user.repository';
+import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 
 
 export class SendRehearsalConfirmMessageHandler {

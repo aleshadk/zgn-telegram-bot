@@ -1,7 +1,7 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 
-import { UserRepository } from '../../DAL/User/user.repository';
+import { UserRepository } from '../../Domain/User/user.repository';
 
 export class NotifyAdminAboutRehearsalStatusChangeHandler {
     private readonly userRepository = new UserRepository;

@@ -1,7 +1,7 @@
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Update } from 'typegram';
-import { UserRepository } from '../DAL/User/user.repository';
-import { isValidPhone } from '../Services/PhoneService';
+import { UserRepository } from '../Domain/User/user.repository';
+import { isValidPhone } from '../utils/phoneUtils';
 import { BookRehearsalHandler } from './handlers/BookRehearsalHandler';
 import { ConfirmRehearsalHandler } from './handlers/ConfirmRehearsalHandler';
 import { GetAvailableRehearsalDuractionHandler } from './handlers/GetAvailableRehearsalDuractionHandler';
@@ -10,13 +10,12 @@ import { GetMyRehearsalsHandler } from './handlers/GetMyRehearsalsHandler';
 import { RejectRehearsalHandler } from './handlers/RejectRehearsalHandler';
 import { StartScheduleHandler } from './handlers/StartSchedulingHandler';
 import { SendRehearsalConfirmMessageHandler } from './notification_handlers/SendRehearsalConfirmMessageHandler';
+import { telegramBot } from './telegramBot';
 
 export class TelegramBot { // TODO: rename class
     private readonly userRepository = new UserRepository();
-    constructor(token: string) {
-        const bot: Telegraf<Context<Update>> = new Telegraf(token);
-
-        bot.start(async (ctx) => {
+    constructor() {
+        telegramBot.start(async (ctx) => {
             let user = await this.userRepository.getUser({ telegramId: ctx.from.id });
             console.log(ctx.chat.id);
 
@@ -45,7 +44,7 @@ export class TelegramBot { // TODO: rename class
             this.handleMessageFromUserWithoutPhone(ctx);
         });
 
-        bot.command('start_booking', async (ctx) => {
+        telegramBot.command('start_booking', async (ctx) => {
             const daysToSchedule = new StartScheduleHandler().handle();
 
             await ctx.reply('Выбери день репетиции', {
@@ -61,7 +60,7 @@ export class TelegramBot { // TODO: rename class
             });
         });
 
-        bot.command('get_my_rehearsals', async ctx => {
+        telegramBot.command('get_my_rehearsals', async ctx => {
             const result = await new GetMyRehearsalsHandler().handle(ctx.from?.id!);
 
             if (result.length === 0) {
@@ -75,7 +74,7 @@ export class TelegramBot { // TODO: rename class
         });
 
         // datechosen__{{date.getTime()}}
-        bot.action(/datechosen+/, (ctx) => {
+        telegramBot.action(/datechosen+/, (ctx) => {
             const date = ctx.match.input.replace('datechosen__', '');
             const durations = new GetAvailableRehearsalDuractionHandler().handle();
 
@@ -93,7 +92,7 @@ export class TelegramBot { // TODO: rename class
         });
 
         // datechosen__{{date.getTime()}}__{{длиттельность репетиции в часах (number)}}
-        bot.action(/durationchosen+/, async (ctx) => {
+        telegramBot.action(/durationchosen+/, async (ctx) => {
             const data = ctx.match.input.replace('durationchosen__', '');
             const [rehearsalDate, duration] = data.split('__');
 
@@ -118,7 +117,7 @@ export class TelegramBot { // TODO: rename class
         });
 
         // TODO: нужно везде делать JSON и делать маппер из джейсона в модель, который будет возвращать типизированную модель или null 
-        bot.action(/slotchosen+/, async ctx => {
+        telegramBot.action(/slotchosen+/, async ctx => {
             const data = ctx.match.input.replace('slotchosen__', '');
             const [rehearsalDate, duration, startTime] = data.split('__');
 
@@ -131,21 +130,21 @@ export class TelegramBot { // TODO: rename class
 
             ctx.reply(result.message);
             if (result.rehearsal) {
-                await new SendRehearsalConfirmMessageHandler().handle(bot, result.rehearsal);
+                await new SendRehearsalConfirmMessageHandler().handle(telegramBot, result.rehearsal);
             }
         });
 
-        bot.action(/rehearsal_confirmed+/, async ctx => {
+        telegramBot.action(/rehearsal_confirmed+/, async ctx => {
             const rehearsalId = ctx.match.input.replace('rehearsal_confirmed__', '');
-            new ConfirmRehearsalHandler().handle(ctx, bot, rehearsalId);
+            new ConfirmRehearsalHandler().handle(ctx, telegramBot, rehearsalId);
         });
 
-        bot.action(/rehearsal_rejected+/, async ctx => {
+        telegramBot.action(/rehearsal_rejected+/, async ctx => {
             const rehearsalId = ctx.match.input.replace('rehearsal_rejected__', '');
-            new RejectRehearsalHandler().handle(ctx, bot, rehearsalId);
+            new RejectRehearsalHandler().handle(ctx, telegramBot, rehearsalId);
         });
 
-        bot.on('text', async (ctx) => {
+        telegramBot.on('text', async (ctx) => {
             const user = await this.userRepository.getUser({ telegramId: ctx.from.id });
 
             if (!user?.phone) {
@@ -162,7 +161,7 @@ export class TelegramBot { // TODO: rename class
             ctx.reply(`${ctx.from.first_name} всё настроено!`);
         });
 
-        bot.launch();
+        telegramBot.launch();
     }
 
     private handleMessageFromUserWithoutPhone(ctx: Context): void {

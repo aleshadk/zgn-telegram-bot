@@ -20,7 +20,7 @@ export class UserRepository {
         
     }
 
-    public async getUserById(id: string): Promise<IUser | undefiend> {
+    public async getUserById(id: string): Promise<IUser | null> {
         return await UserModel.findById(id);
     }
 

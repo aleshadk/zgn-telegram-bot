@@ -1,50 +1,26 @@
 import mongoose from 'mongoose';
+import { appEnvironment } from './app.environment';
 import { TelegramBot } from './Telegram/Temp';
 
-interface IEnv {
-    PORT: number;
-    MONGO: string;
-    TELEGRAM_BOT_TOKEN: string;
-}
-
-const MONGO_OPTIONS = {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    socketTimeoutMS: 30000,
-    keepAlive: true,
-    autoIndex: false,
-    retryWrites: false,
-}
-
-export class AppInitializer {
-    private readonly env: IEnv;
-    constructor(env: unknown) {
-        this.env = env as IEnv;
+async function initMongo(): Promise<void> {
+    const MONGO_OPTIONS = {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        socketTimeoutMS: 30000,
+        keepAlive: true,
+        autoIndex: false,
+        retryWrites: false,
     }
 
-    public async init(): Promise<void> {
-        await Promise.all([
-            this.initMongo(),
-            this.initTelegram()
-        ]);
-    } 
-
-    private async initMongo(): Promise<void> {
-        try {
-            await mongoose.connect(this.env.MONGO, MONGO_OPTIONS);
-            this.log('MongoDb connected');
-        } catch (error) {
-            this.log(`ERROR: MongoDB not connected ${error}`);
-        }
-    } 
-
-    private async initTelegram(): Promise<void> {
-        new TelegramBot(this.env.TELEGRAM_BOT_TOKEN);
-        this.log('TelegramBot connected');
-
-    } 
-
-    private log(message: string): void {
-        console.log(`[APP INIT]: ${message}`);
+    try {
+        await mongoose.connect(appEnvironment.mongoConnectionString, MONGO_OPTIONS);
+        console.log('[APP INIT]: MongoDb connected');
+    } catch (error) {
+        console.log(`[APP INIT]: ERROR: MongoDB not connected ${error}`);
     }
+}
+
+export async function initApp(): Promise<void> {
+    await initMongo();
+    console.log('App started');
 }

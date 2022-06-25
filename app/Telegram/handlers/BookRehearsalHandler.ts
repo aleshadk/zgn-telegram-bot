@@ -1,10 +1,10 @@
 import { addHours, formatISO, isPast } from 'date-fns';
 
-import { IRehearsal, IRehearsalSaveModel, RehearsalStatus } from '../../DAL/Rehearsal/rehearsal.model';
-import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
-import { IUser } from '../../DAL/User/user.model';
-import { UserRepository } from '../../DAL/User/user.repository';
-import { formatRehearsalDateWithDuration } from '../../Services/DateUtils';
+import { IRehearsal, IRehearsalSaveModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
+import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
+import { IUser } from '../../Domain/User/user.model';
+import { UserRepository } from '../../Domain/User/user.repository';
+import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 
 interface IHandlerResult {
     message: string;
