@@ -23,7 +23,7 @@ export class SendRehearsalConfirmMessageHandler {
                         inline_keyboard: [
                             [
                                 Markup.button.callback('✅ Подтвердить', `rehearsal_confirmed__${rehearsal.id}`),
-                                Markup.button.callback('❌ Не подтвердить', `rehearsal_rejected__${rehearsal.id}`),
+                                Markup.button.callback('❌ Отклонить', `rehearsal_rejected__${rehearsal.id}`),
                             ]
                         ]
                     }

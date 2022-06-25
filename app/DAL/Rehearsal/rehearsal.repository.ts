@@ -1,6 +1,7 @@
 import { formatISO } from 'date-fns';
-import { IRehearsal, IRehearsalSaveModel, RehearsalModel } from './rehearsal.model';
+import { IRehearsal, IRehearsalSaveModel, RehearsalModel, RehearsalStatus } from './rehearsal.model';
 import { IUser } from '../User/user.model';
+import { RehearsalController } from '../../WEB/rehearsal.controller';
 
 export class RehearsalRepository {
     public getAllRehearsals(): Promise<IRehearsal[]> {
@@ -27,8 +28,8 @@ export class RehearsalRepository {
         return await RehearsalModel.findById(rehearsalId);
     }
 
-    public async confirmRehearsal(rehearsalId: string): Promise<IRehearsal | null> {
-        return await RehearsalModel.findByIdAndUpdate(rehearsalId, {isConfirmed: true});
+    public async changeRehearsalStatus(rehearsalId: string, status: RehearsalStatus): Promise<IRehearsal | null> {
+        return await RehearsalModel.findByIdAndUpdate(rehearsalId, {status});
     }
 
     public async getUserActiveRehearsals(user: IUser): Promise<IRehearsal[]> {
@@ -41,17 +42,23 @@ export class RehearsalRepository {
     }
 
     // TODO: плохое название
-    public async getRehearsalsWhereStartTimeBetween(from: Date, to: Date): Promise<IRehearsal[]> {
+    public async getActiveRehearsalsInConflictWithSlot(from: Date, to: Date): Promise<IRehearsal[]> {
         // TODO: можно переписать на метод exists
         return new Promise<IRehearsal[]>((resolve) => {
-            
+            const statuses = [
+                RehearsalStatus.Draft,
+                RehearsalStatus.Confirmed,
+            ];
+
             RehearsalModel.find({
                 $or: [
                     {
-                        startTime: { $gte: formatISO(from), $lt: formatISO(to) }
+                        startTime: { $gte: formatISO(from), $lt: formatISO(to) },
+                        status: statuses
                     }, 
                     {
                         endTime: { $gt: formatISO(from), $lt: formatISO(to) },
+                        status: statuses
                     }
                 ] 
                 

@@ -13,7 +13,7 @@ export class GetAvailableRehearsalStartTimeHandler {
         const nextDayAfterRehearsalStart = addDays(rehearsalDate, 1);
         const maxPossibleRehearsalEndTIme = addHours(nextDayAfterRehearsalStart, parseInt(data.duration) - 1);
 
-        const rehearsals = await this.rehearsalRepository.getRehearsalsWhereStartTimeBetween(rehearsalDate, maxPossibleRehearsalEndTIme);
+        const existedRehearsals = await this.rehearsalRepository.getActiveRehearsalsInConflictWithSlot(rehearsalDate, maxPossibleRehearsalEndTIme);
 
         const availableSlots: string[] = [];
 
@@ -32,7 +32,7 @@ export class GetAvailableRehearsalStartTimeHandler {
             const start = this.getSlotStartTime(rehearsalDate, slot);
             const end = this.getSlotEndTime(start, duration);
 
-            const hasConflictRehearsal = rehearsals.some(r => {
+            const hasConflictRehearsal = existedRehearsals.some(r => {
                 // Если есть репетиция, которая начинается позже начала слота, но при этом не раньше конца слота, то слот недоступен
                 // слот      |---------|
                 // репетиция       |---

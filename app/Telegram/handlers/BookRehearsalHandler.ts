@@ -1,6 +1,6 @@
 import { addHours, formatISO, isPast } from 'date-fns';
 
-import { IRehearsal, IRehearsalSaveModel } from '../../DAL/Rehearsal/rehearsal.model';
+import { IRehearsal, IRehearsalSaveModel, RehearsalStatus } from '../../DAL/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
 import { IUser } from '../../DAL/User/user.model';
 import { UserRepository } from '../../DAL/User/user.repository';
@@ -34,7 +34,7 @@ export class BookRehearsalHandler {
             createdBy: user!,
             endTime,
             startTime,
-            isConfirmed: false
+            status: RehearsalStatus.Draft
         }
 
         const rehearsal = await this.rehearsalRepository.createRehearsal(saveModel);
@@ -79,7 +79,7 @@ export class BookRehearsalHandler {
     }
 
     private async hasFreeSlot(startTime: Date, endTime: Date): Promise<boolean> {
-        const rehearsals = await this.rehearsalRepository.getRehearsalsWhereStartTimeBetween(startTime, endTime);
+        const rehearsals = await this.rehearsalRepository.getActiveRehearsalsInConflictWithSlot(startTime, endTime);
         return rehearsals.length === 0;
     }
 }

@@ -7,6 +7,7 @@ import { ConfirmRehearsalHandler } from './handlers/ConfirmRehearsalHandler';
 import { GetAvailableRehearsalDuractionHandler } from './handlers/GetAvailableRehearsalDuractionHandler';
 import { GetAvailableRehearsalStartTimeHandler } from './handlers/GetAvailableRehearsalStartTimeHandler';
 import { GetMyRehearsalsHandler } from './handlers/GetMyRehearsalsHandler';
+import { RejectRehearsalHandler } from './handlers/RejectRehearsalHandler';
 import { StartScheduleHandler } from './handlers/StartSchedulingHandler';
 import { SendRehearsalConfirmMessageHandler } from './notification_handlers/SendRehearsalConfirmMessageHandler';
 
@@ -97,6 +98,12 @@ export class TelegramBot { // TODO: rename class
             const [rehearsalDate, duration] = data.split('__');
 
             const slots = await new GetAvailableRehearsalStartTimeHandler().handle({rehearsalDate, duration});
+
+            if (slots.length === 0) {
+                ctx.reply('В этот день нет подходящих по длительности слотов :(');
+                return;
+            }
+
             ctx.reply("Выбери время начала репетиции", {
                 reply_markup: {
                     inline_keyboard: [
@@ -130,11 +137,12 @@ export class TelegramBot { // TODO: rename class
 
         bot.action(/rehearsal_confirmed+/, async ctx => {
             const rehearsalId = ctx.match.input.replace('rehearsal_confirmed__', '');
-            new ConfirmRehearsalHandler().handleConfirm(ctx, bot, rehearsalId);
+            new ConfirmRehearsalHandler().handle(ctx, bot, rehearsalId);
         });
 
         bot.action(/rehearsal_rejected+/, async ctx => {
-            const rehearsalId = parseInt(ctx.match.input.replace('rehearsal_rejected__', ''));
+            const rehearsalId = ctx.match.input.replace('rehearsal_rejected__', '');
+            new RejectRehearsalHandler().handle(ctx, bot, rehearsalId);
         });
 
         bot.on('text', async (ctx) => {

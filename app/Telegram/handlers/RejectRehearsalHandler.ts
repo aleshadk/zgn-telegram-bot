@@ -8,7 +8,7 @@ import { UserRepository } from '../../DAL/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../Services/DateUtils';
 import { NotifyAdminAboutRehearsalStatusChangeHandler } from '../notification_handlers/NotifyAdminAboutRehearsalStatusChangeHandler';
 
-export class ConfirmRehearsalHandler {
+export class RejectRehearsalHandler {
     private readonly rehearsalRepository = new RehearsalRepository;;
     private readonly userRepository = new UserRepository;;
 
@@ -24,24 +24,12 @@ export class ConfirmRehearsalHandler {
             return;
         }
 
-        if (rehearsal.status !== RehearsalStatus.Draft) {
-            let message: string;
-            switch (rehearsal.status) {
-                case RehearsalStatus.Rejected:
-                    message = 'Эту репетицию уже кто-то отклонил ❌';
-                    break;
-                case RehearsalStatus.Confirmed:
-                    message = 'Эту репетицию уже кто-то подтвердил ✅';
-                    break;
-                default:
-                    break;
-            }
-
-            ctx.reply(message);
+        if (rehearsal.status === RehearsalStatus.Rejected) {
+            ctx.reply('Эту репетицию и так уже кто-то отклонил');
             return;
         }
 
-        const updatedRehearsal = await this.rehearsalRepository.changeRehearsalStatus(rehearsalId, RehearsalStatus.Confirmed);
+        const updatedRehearsal = await this.rehearsalRepository.changeRehearsalStatus(rehearsalId, RehearsalStatus.Rejected);
 
         if (!updatedRehearsal) {
             // TODO: может добавить логи?
@@ -49,20 +37,24 @@ export class ConfirmRehearsalHandler {
             return;
         }
 
-        bot.telegram.sendMessage(rehearsalCreatedBy.telegramChatId, `Твоя репетиция ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} подтверждена!`);
+        bot.telegram.sendMessage(rehearsalCreatedBy.telegramChatId, `❌ Мы не можем обеспечить репетицию ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)}!`);
 
         void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(
             bot,
-            this.getRehearsalConfirmedMessage(rehearsalCreatedBy, rehearsal, ctx.message?.from.first_name!)
+            this.getRehearsalRejectdMessage(
+                rehearsalCreatedBy,
+                rehearsal,
+                ctx.from?.first_name!
+            )
         );
     }
 
-    private getRehearsalConfirmedMessage(
+    private getRehearsalRejectdMessage(
         rehearsalCreatedBy: IUser,
         rehearsal: IRehearsal,
         confirmedByTelegramName: string
     ): string {
         const rehearsalDateTime = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
-        return `✅ Репетицию ${rehearsalCreatedBy.firstName} (тел. ${rehearsalCreatedBy.phone}) ${rehearsalDateTime} подтвердил ${confirmedByTelegramName}`;
+        return `❌❌❌ Репетицию ${rehearsalCreatedBy.firstName} (тел. ${rehearsalCreatedBy.phone}) ${rehearsalDateTime} отклонил ${confirmedByTelegramName}`;
     }
 }
