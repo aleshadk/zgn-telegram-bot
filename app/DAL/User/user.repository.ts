@@ -20,6 +20,10 @@ export class UserRepository {
         
     }
 
+    public async getUserById(id: string): Promise<IUser | undefiend> {
+        return await UserModel.findById(id);
+    }
+
     public async getAdminUsers(): Promise<IUser[]> {
         return await UserModel.find({isAdmin: true});
     }

@@ -16,6 +16,7 @@ export class ConfirmRehearsalHandler {
         rehearsalId: string
     ): Promise<void> {
         const rehearsal = await this.rehearsalRepository.getRehearsalById(rehearsalId);
+        const rehearsalCreatedBy = await this.userRepository.getUserById(rehearsal?.createdBy as string); // TODO Refactor
 
         if (!rehearsal) {
             return;
@@ -34,14 +35,15 @@ export class ConfirmRehearsalHandler {
             return;
         }
 
-        bot.telegram.sendMessage(rehearsal.createdBy.telegramChatId, `Твоя репетиция ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} подтверждена!`);
+        bot.telegram.sendMessage(rehearsalCreatedBy.telegramChatId, `Твоя репетиция ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} подтверждена!`);
         ctx.reply('Всё ок, репетиция подтверждена');
 
         const admins = await this.userRepository.getAdminUsers();
         admins
             .filter(x => x.telegramId !== ctx.from?.id)
             .forEach(x => {
-                bot.telegram.sendMessage(x.telegramId, `Репетицию ${rehearsal.createdBy.firstName} (тел. ${rehearsal.createdBy.phone}) уже подтвердил ${ctx.from?.first_name}`);
+                bot.telegram.sendMessage(x.telegramId, `Репетицию ${rehearsalCreatedBy.firstName} (тел. ${rehearsalCreatedBy.phone}) ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} уже подтвердил ${ctx.from?.first_name}`);
             });
     }
+
 }

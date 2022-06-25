@@ -11,7 +11,7 @@ export function formatRehearsalDateTime(date: Date): string {
     }
 
     return format(
-        new Date(),
+        date,
         'd MMMM HH:mm',
         { locale: ruLocale }
       )

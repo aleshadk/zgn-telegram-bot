@@ -17,6 +17,7 @@ export class TelegramBot { // TODO: rename class
 
         bot.start(async (ctx) => {
             let user = await this.userRepository.getUser({ telegramId: ctx.from.id });
+            console.log(ctx.chat.id);
 
             if (user) {
                 if (user.phone) {
