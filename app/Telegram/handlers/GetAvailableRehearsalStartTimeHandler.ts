@@ -1,8 +1,7 @@
-import { add, addDays, addHours, formatISO, nextDay } from 'date-fns';
+import { add, addDays, addHours, formatISO, isToday, nextDay } from 'date-fns';
 import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
+import { getNextHour } from '../../Services/DateUtils';
 import { ZAGON_CONFIG } from '../../zagon.config';
-
-const ruLocale = require('date-fns/locale/ru')
 
 export class GetAvailableRehearsalStartTimeHandler {
     private rehearsalRepository = new RehearsalRepository(); 
@@ -18,7 +17,11 @@ export class GetAvailableRehearsalStartTimeHandler {
 
         const availableSlots: string[] = [];
 
-        for (let startHour = ZAGON_CONFIG.START_HOUR; startHour <= ZAGON_CONFIG.END_HOUR; startHour++) {
+        let startHour = isToday(rehearsalDate)
+            ? getNextHour()
+            : ZAGON_CONFIG.START_HOUR;
+
+        for (startHour; startHour <= ZAGON_CONFIG.END_HOUR; startHour++) {
             const currentSlotEndTime = startHour + duration;
             if (currentSlotEndTime > ZAGON_CONFIG.END_HOUR) {
                 continue;

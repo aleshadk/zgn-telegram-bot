@@ -40,6 +40,7 @@ export class RehearsalRepository {
         });
     }
 
+    // TODO: плохое название
     public async getRehearsalsWhereStartTimeBetween(from: Date, to: Date): Promise<IRehearsal[]> {
         // TODO: можно переписать на метод exists
         return new Promise<IRehearsal[]>((resolve) => {

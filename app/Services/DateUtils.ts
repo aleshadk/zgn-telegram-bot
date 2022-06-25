@@ -27,3 +27,10 @@ export function formatRehearsalDateWithDuration(start: Date, end: Date): string 
 
     return `${dateTime} на ${duration}`;
 }
+
+export function getNextHour(): number {
+    const now = new Date();
+    const hour = format(now, 'H', {locale: ruLocale});
+
+    return parseInt(hour) + 1;
+}

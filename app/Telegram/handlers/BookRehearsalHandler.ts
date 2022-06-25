@@ -1,7 +1,8 @@
-import { addHours, formatISO } from 'date-fns';
+import { addHours, formatISO, isPast } from 'date-fns';
 
 import { IRehearsal, IRehearsalSaveModel } from '../../DAL/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../DAL/Rehearsal/rehearsal.repository';
+import { IUser } from '../../DAL/User/user.model';
 import { UserRepository } from '../../DAL/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../Services/DateUtils';
 
@@ -17,27 +18,20 @@ export class BookRehearsalHandler {
 
     public async handle(data: {userTelegramId: number, rehearsalDate: string, startTime: string, duration: string}): Promise<IHandlerResult> {
         const user = await this.userRepository.getUser({telegramId: data.userTelegramId});
-        if (!user) {
-            return {
-                message: 'Тебя нет в нашей базе, попробуй написать /start и зарегистрироваться',
-                rehearsal: null,
-            };
-        }
-
         const startTime = this.calculateStartTime(data.rehearsalDate, data.startTime);
         const endTime = this.calculateEndTime(startTime, data.duration);
 
-        const hasFreeSlot = await this.hasFreeSlot(startTime, endTime);
+        const error =  await this.validate(user, startTime, endTime);
 
-        if (!hasFreeSlot) {
+        if (error) {
             return {
-                message: `Репетиция не забронирована: этот слот занят`,
+                message: error,
                 rehearsal: null
-            }
+            };
         }
 
         const saveModel: IRehearsalSaveModel = {
-            createdBy: user,
+            createdBy: user!,
             endTime,
             startTime,
             isConfirmed: false
@@ -48,6 +42,27 @@ export class BookRehearsalHandler {
             rehearsal,
             message: `Успешный успех, ждём от админов подтверждения репетиции ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} 🤘`
         };
+    }
+
+    /**
+     * @returns error text or undefined if validation has been passed
+     */
+    private async validate(user: IUser | undefined, rehearsalStart: Date, rehearsalEnd: Date): Promise<string | undefined> {
+        if (!user) {
+            return 'тебя нет в нашей базе, попробуй написать /start и зарегистрироваться';
+        }
+
+        if (isPast(rehearsalStart)) {
+            return 'этот слот уже не актуален';
+        }
+
+        const hasFreeSlot = await this.hasFreeSlot(rehearsalStart, rehearsalEnd);
+
+        if (!hasFreeSlot) {
+            return `этот слот занят`;
+        }
+
+        return undefined;
     }
 
     private calculateStartTime(rehearsalDate: string, rehearsalStartTime: string): Date {

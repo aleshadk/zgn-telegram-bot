@@ -73,6 +73,7 @@ export class TelegramBot { // TODO: rename class
             ctx.reply(response);
         });
 
+        // datechosen__{{date.getTime()}}
         bot.action(/datechosen+/, (ctx) => {
             const date = ctx.match.input.replace('datechosen__', '');
             const durations = new GetAvailableRehearsalDuractionHandler().handle();
@@ -90,6 +91,7 @@ export class TelegramBot { // TODO: rename class
             });
         });
 
+        // datechosen__{{date.getTime()}}__{{длиттельность репетиции в часах (number)}}
         bot.action(/durationchosen+/, async (ctx) => {
             const data = ctx.match.input.replace('durationchosen__', '');
             const [rehearsalDate, duration] = data.split('__');
@@ -108,6 +110,7 @@ export class TelegramBot { // TODO: rename class
             });
         });
 
+        // TODO: нужно везде делать JSON и делать маппер из джейсона в модель, который будет возвращать типизированную модель или null 
         bot.action(/slotchosen+/, async ctx => {
             const data = ctx.match.input.replace('slotchosen__', '');
             const [rehearsalDate, duration, startTime] = data.split('__');
