@@ -9,7 +9,7 @@ import { telegramRehearsalDateChosenHandler } from './commands/telegram-rehearsa
 import { telegramRehearsalDurationChosenHandler } from './commands/telegram-rehearsal-duration-chosen.handler';
 import { telegramRehearsalSlotChosenHandler } from './commands/telegram-rehearsal-slot-chosen.handler';
 import { handleTelegramStartBookingCommand } from './commands/telegram-start-booking-command.handler';
-import { handleTelegramStartCommand } from './commands/telegram-start-rehearsal.handler';
+import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
 import { telegramBot } from './telegramBot';
 
 export class TelegramBot { // TODO: rename class

@@ -1,5 +1,5 @@
 import { Context } from 'telegraf';
-import { IChooseStartTimeCommandModel } from '../telegram.models';
+import { IChooseStartTimeCommandModel } from '../../telegram.models';
 
 // TODO: придумать адекватное что-то вместо Partial
 export abstract class AbstractTelegramAction<TModel extends Partial<IChooseStartTimeCommandModel>> {
