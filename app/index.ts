@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 
 import { initApp } from './app.initializer';
-import { TelegramBot } from './Telegram/Temp';
+import { TelegramBot } from './telegram/Temp';
 
 dotenv.config();
 initApp();

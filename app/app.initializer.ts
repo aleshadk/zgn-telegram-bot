@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { appEnvironment } from './app.environment';
-import { TelegramBot } from './Telegram/Temp';
+import { TelegramBot } from './telegram/Temp';
 
 async function initMongo(): Promise<void> {
     const MONGO_OPTIONS = {

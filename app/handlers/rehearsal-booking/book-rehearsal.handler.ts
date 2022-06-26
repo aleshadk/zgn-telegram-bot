@@ -16,10 +16,10 @@ export class BookRehearsalHandler {
     private readonly userRepository = new UserRepository;;
 
 
-    public async handle(data: {userTelegramId: number, rehearsalDate: string, startTime: string, duration: string}): Promise<IHandlerResult> {
+    public async handle(data: {userTelegramId: number, rehearsalDate: Date, rehearsalDuration: number, rehearsalStartTime: string, }): Promise<IHandlerResult> {
         const user = await this.userRepository.getUser({telegramId: data.userTelegramId});
-        const startTime = this.calculateStartTime(data.rehearsalDate, data.startTime);
-        const endTime = this.calculateEndTime(startTime, data.duration);
+        const startTime = this.calculateStartTime(data.rehearsalDate, data.rehearsalStartTime);
+        const endTime = this.calculateEndTime(startTime, data.rehearsalDuration);
 
         const error =  await this.validate(user, startTime, endTime);
 
@@ -65,8 +65,8 @@ export class BookRehearsalHandler {
         return undefined;
     }
 
-    private calculateStartTime(rehearsalDate: string, rehearsalStartTime: string): Date {
-        const startTime = new Date(parseInt(rehearsalDate));
+    private calculateStartTime(rehearsalDate: Date, rehearsalStartTime: string): Date {
+        const startTime = new Date(rehearsalDate);
         const [startHour, startMinute] = rehearsalStartTime.split(':');
         startTime.setHours(parseInt(startHour));
         startTime.setMinutes(parseInt(startMinute));
@@ -74,8 +74,8 @@ export class BookRehearsalHandler {
         return startTime;
     }
 
-    private calculateEndTime(startTime: Date, duration: string): Date {
-        return addHours(startTime, parseInt(duration));
+    private calculateEndTime(startTime: Date, duration: number): Date {
+        return addHours(startTime, duration);
     }
 
     private async hasFreeSlot(startTime: Date, endTime: Date): Promise<boolean> {

@@ -7,12 +7,12 @@ import { ZAGON_CONFIG } from '../../zagon.config';
 export class GetAvailableRehearsalStartTimeSlotsHandler {
     private rehearsalRepository = new RehearsalRepository(); 
 
-    public async handle(data: {rehearsalDate: string, duration: string}): Promise<string[]> {
-        const rehearsalDate = new Date(parseInt(data.rehearsalDate));
-        const duration = parseInt(data.duration);
+    public async handle(data: {rehearsalDate: Date, rehearsalDuration: number}): Promise<string[]> {
+        const rehearsalDate = data.rehearsalDate;
+        const duration = data.rehearsalDuration;
 
         const nextDayAfterRehearsalStart = addDays(rehearsalDate, 1);
-        const maxPossibleRehearsalEndTIme = addHours(nextDayAfterRehearsalStart, parseInt(data.duration) - 1);
+        const maxPossibleRehearsalEndTIme = addHours(nextDayAfterRehearsalStart, data.rehearsalDuration - 1);
 
         const existedRehearsals = await this.rehearsalRepository.getActiveRehearsalsInConflictWithSlot(rehearsalDate, maxPossibleRehearsalEndTIme);
 

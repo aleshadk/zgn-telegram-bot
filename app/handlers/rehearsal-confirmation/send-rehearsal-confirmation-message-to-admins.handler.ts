@@ -1,21 +1,20 @@
-import { Context, Markup, Telegraf } from 'telegraf';
-import { Update } from 'telegraf/typings/core/types/typegram';
+import { Markup } from 'telegraf';
 
 import { IRehearsal } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { UserRepository } from '../../Domain/User/user.repository';
+import { telegramBot } from '../../telegram/telegramBot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 
 
 export class SendRehearsalConfirmationMessageToAdminsHandler {
-    private readonly rehearsalRepository = new RehearsalRepository;;
     private readonly userRepository = new UserRepository;
 
-    public async handle(bot: Telegraf<Context<Update>>, rehearsal: IRehearsal ): Promise<void> {
+    public async handle(rehearsal: IRehearsal ): Promise<void> {
         const admins = await this.userRepository.getAdminUsers();
 
         admins.forEach(x => {
-            bot.telegram.sendMessage(
+            telegramBot.telegram.sendMessage(
                 x.telegramChatId,
                 this.getMessage(rehearsal),
                 {
