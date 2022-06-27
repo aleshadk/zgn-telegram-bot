@@ -1,7 +1,12 @@
 import { Markup } from 'telegraf'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
-export function getOneColumnButtons(actions: {label: string, data: string}[]): {reply_markup: {inline_keyboard: InlineKeyboardButton[][]}} {
+interface IButtonData {
+    label: string;
+    data: string
+}
+
+export function getOneColumnButtons(actions: IButtonData[]): {reply_markup: {inline_keyboard: InlineKeyboardButton[][]}} {
     return {
         reply_markup: {
             inline_keyboard: [
@@ -10,6 +15,29 @@ export function getOneColumnButtons(actions: {label: string, data: string}[]): {
                         Markup.button.callback(x.label, x.data, true)
                     ]
                 })
+            ]
+        }
+    }
+}
+
+export function getTwoColumnsButtons(actions: IButtonData[]): {reply_markup: {inline_keyboard: InlineKeyboardButton[][]}} {
+    const left: IButtonData[] = [];
+    const right: IButtonData[] = [];
+
+    actions.forEach((x, i) => {
+        const column = i % 2 === 0 ? left : right;
+        column.push(x);
+    });
+
+    if (!right.length) {
+        return getOneColumnButtons(actions);
+    }
+
+    return {
+        reply_markup: {
+            inline_keyboard: [
+                left.map(x => Markup.button.callback(x.label, x.data, true)),
+                right.map(x => Markup.button.callback(x.label, x.data, true)),
             ]
         }
     }

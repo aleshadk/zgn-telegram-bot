@@ -13,6 +13,8 @@ import { abandonRehearsalCommand } from './commands/manage-rehearsals/abandon-re
 import { manageMyRehearsalsCommand } from './commands/manage-rehearsals/manage-my-rehearsals-command.handler';
 import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
 import { telegramBot } from './telegramBot';
+import { confirmRehearsalCommandHandler } from './commands/confirmation/telegram-confirm-rehearsal.handler';
+import { rejectRehearsalHandler } from './commands/confirmation/telegram-reject-rehearsal.handler';
 /*
 start_booking - забронировать репетицию
 get_my_rehearsals - посмотреть свои репетиции
@@ -30,15 +32,8 @@ export class TelegramBot { // TODO: rename class
         telegramBot.action(/book+/, ctx => telegramBookReheatsalHandler.handle(ctx, ctx.match.input));
 
         // confirmation
-        telegramBot.action(/rehearsal_confirmed+/, async ctx => {
-            const rehearsalId = ctx.match.input.replace('rehearsal_confirmed__', '');
-            new ConfirmRehearsalHandler().handle(ctx, telegramBot, rehearsalId);
-        });
-
-        telegramBot.action(/rehearsal_rejected+/, async ctx => {
-            const rehearsalId = ctx.match.input.replace('rehearsal_rejected__', '');
-            new RejectRehearsalHandler().handle(ctx, telegramBot, rehearsalId);
-        });
+        telegramBot.action(/confirm_rehearsal+/, async ctx => confirmRehearsalCommandHandler.handle(ctx, ctx.match.input));
+        telegramBot.action(/reject_rehearsal+/, async ctx => rejectRehearsalHandler.handle(ctx, ctx.match.input));
 
         // manage
         telegramBot.command('get_my_rehearsals', async ctx => {

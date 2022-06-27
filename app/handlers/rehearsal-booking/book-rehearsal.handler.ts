@@ -5,6 +5,7 @@ import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository
 import { IUser } from '../../Domain/User/user.model';
 import { UserRepository } from '../../Domain/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
+import { SendRehearsalConfirmationMessageToAdminsHandler } from '../rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
 
 interface IHandlerResult {
     message: string;
@@ -38,6 +39,8 @@ export class BookRehearsalHandler {
         }
 
         const rehearsal = await this.rehearsalRepository.createRehearsal(saveModel);
+        await new SendRehearsalConfirmationMessageToAdminsHandler().handle(rehearsal);
+
         return {
             rehearsal,
             message: `Успешный успех, ждём от админов подтверждения репетиции ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} 🤘`

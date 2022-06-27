@@ -1,9 +1,6 @@
 import { Context } from 'telegraf';
 
 import { BookRehearsalHandler } from '../../../handlers/rehearsal-booking/book-rehearsal.handler';
-import {
-    SendRehearsalConfirmationMessageToAdminsHandler,
-} from '../../../handlers/rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
 import { AbstractTelegramCommandWithData } from '../abstract-telegram-comand-with-data.handler';
 import { IChooseStartTimeCommandModel } from './booking.model';
 
@@ -18,9 +15,6 @@ class TelegramBookRehearsalHandler extends AbstractTelegramCommandWithData<IChoo
         });
 
         ctx.reply(result.message);
-        if (result.rehearsal) {
-            await new SendRehearsalConfirmationMessageToAdminsHandler().handle(result.rehearsal);
-        }
     }
 
     public createTelegramComandString(model: IChooseStartTimeCommandModel): string {

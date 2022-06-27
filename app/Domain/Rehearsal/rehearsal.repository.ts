@@ -1,6 +1,6 @@
 import { formatISO } from 'date-fns';
-import { IRehearsal, IRehearsalSaveModel, RehearsalModel, RehearsalStatus } from './rehearsal.model';
-import { IUser } from '../User/user.model';
+import { IRehearsal, IRehearsalFullModel, IRehearsalSaveModel, RehearsalModel, RehearsalStatus } from './rehearsal.model';
+import { IUser, __user_schema_name } from '../User/user.model';
 
 export class RehearsalRepository {
     public getAllRehearsals(): Promise<IRehearsal[]> {
@@ -23,8 +23,9 @@ export class RehearsalRepository {
         })
     }
 
-    public async getRehearsalById(rehearsalId: string): Promise<IRehearsal | null> {
-        return await RehearsalModel.findById(rehearsalId);
+    public async getRehearsalById(rehearsalId: string): Promise<IRehearsalFullModel | null> {
+        return await RehearsalModel.findById(rehearsalId)
+            .populate('createdBy');
     }
 
     public async changeRehearsalStatus(rehearsalId: string, status: RehearsalStatus): Promise<IRehearsal | null> {

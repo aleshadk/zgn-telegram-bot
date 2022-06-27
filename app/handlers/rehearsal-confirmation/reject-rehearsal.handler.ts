@@ -1,59 +1,51 @@
-import { Context, Telegraf } from 'telegraf';
-import { Update } from 'telegraf/typings/core/types/typegram';
-import { IRehearsal, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
-
+import { IRehearsalFullModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
-import { IUser } from '../../Domain/User/user.model';
-import { UserRepository } from '../../Domain/User/user.repository';
+import { telegramBot } from '../../telegram/telegramBot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 import { NotifyAdminAboutRehearsalStatusChangeHandler } from './notify-admin-about-rehearsal-status-change.handler';
 
 export class RejectRehearsalHandler {
     private readonly rehearsalRepository = new RehearsalRepository;;
-    private readonly userRepository = new UserRepository;;
 
     public async handle(
-        ctx: Context,
-        bot: Telegraf<Context<Update>>,
-        rehearsalId: string
-    ): Promise<void> {
+        rehearsalId: string,
+        currentUserTelegramName: string,
+    ): Promise<string | undefined> {
         const rehearsal = await this.rehearsalRepository.getRehearsalById(rehearsalId);
-        const rehearsalCreatedBy = await this.userRepository.getUserById(rehearsal?.createdBy as string); // TODO Refactor
 
         if (!rehearsal) {
             return;
         }
 
         if (rehearsal.status === RehearsalStatus.Rejected) {
-            ctx.reply('Эту репетицию и так уже кто-то отклонил');
-            return;
+            return 'Эту репетицию и так уже кто-то отклонил';
         }
 
         const updatedRehearsal = await this.rehearsalRepository.changeRehearsalStatus(rehearsalId, RehearsalStatus.Rejected);
 
         if (!updatedRehearsal) {
-            // TODO: может добавить логи?
-            ctx.reply('Что-то сломалось');
-            return;
+            return 'Что-то сломалось';
         }
 
-        bot.telegram.sendMessage(rehearsalCreatedBy.telegramChatId, `❌ Мы не можем обеспечить репетицию ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)}!`);
-
-        void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(
-            this.getRehearsalRejectdMessage(
-                rehearsalCreatedBy,
-                rehearsal,
-                ctx.from?.first_name!
-            )
-        );
+        this.notifyRehearsalOwner(rehearsal);
+        this.notifyAdmins(rehearsal, currentUserTelegramName);
     }
 
-    private getRehearsalRejectdMessage(
-        rehearsalCreatedBy: IUser,
-        rehearsal: IRehearsal,
-        confirmedByTelegramName: string
-    ): string {
+
+    private async notifyAdmins(
+        rehearsal: IRehearsalFullModel,
+        confirmedByTelegramName: string,
+    ): Promise<void> {
         const rehearsalDateTime = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
-        return `❌❌❌ Репетицию ${rehearsalCreatedBy.firstName} (тел. ${rehearsalCreatedBy.phone}) ${rehearsalDateTime} отклонил ${confirmedByTelegramName}`;
+        const message = `❌❌❌ Репетицию ${rehearsal.createdBy.firstName} (тел. ${rehearsal.createdBy.phone}) ${rehearsalDateTime} отклонил ${confirmedByTelegramName}`;
+
+        void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(message);
+    }
+
+    private notifyRehearsalOwner(rehearsal: IRehearsalFullModel): void {
+        telegramBot.telegram.sendMessage(
+            rehearsal.createdBy.telegramChatId,
+            `❌ Мы не можем обеспечить репетицию ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)}!`
+        );
     }
 }

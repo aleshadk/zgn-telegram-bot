@@ -1,10 +1,10 @@
-import { Markup } from 'telegraf';
-
 import { IRehearsal } from '../../Domain/Rehearsal/rehearsal.model';
-import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { UserRepository } from '../../Domain/User/user.repository';
+import { confirmRehearsalCommandHandler } from '../../telegram/commands/confirmation/telegram-confirm-rehearsal.handler';
+import { rejectRehearsalHandler } from '../../telegram/commands/confirmation/telegram-reject-rehearsal.handler';
 import { telegramBot } from '../../telegram/telegramBot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
+import { getTwoColumnsButtons } from '../../utils/telegramButtonUtilsMarkup';
 
 
 export class SendRehearsalConfirmationMessageToAdminsHandler {
@@ -12,21 +12,16 @@ export class SendRehearsalConfirmationMessageToAdminsHandler {
 
     public async handle(rehearsal: IRehearsal ): Promise<void> {
         const admins = await this.userRepository.getAdminUsers();
+                const message = this.getMessage(rehearsal);
 
         admins.forEach(x => {
             telegramBot.telegram.sendMessage(
                 x.telegramChatId,
-                this.getMessage(rehearsal),
-                {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                Markup.button.callback('✅ Подтвердить', `rehearsal_confirmed__${rehearsal.id}`),
-                                Markup.button.callback('❌ Отклонить', `rehearsal_rejected__${rehearsal.id}`),
-                            ]
-                        ]
-                    }
-                }
+                message,
+                getTwoColumnsButtons([
+                    {label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramComandString({rehearsalId: rehearsal.id})},
+                    {label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramComandString({rehearsalId: rehearsal.id})},
+                ])
             )
         })
     }
