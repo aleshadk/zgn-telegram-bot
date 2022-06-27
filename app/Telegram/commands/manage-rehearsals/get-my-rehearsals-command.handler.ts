@@ -1,8 +1,7 @@
 import { Context } from 'telegraf';
+
 import { GetMyRehearsalsHandler } from '../../../handlers/user/get-my-rehearsals.handler';
-import { getOneColumnButtons } from '../../../utils/telegramButtonUtilsMarkup';
 import { AbstractTelegramCommandHandler } from '../abstract-telegram-command.handler';
-import { abandonRehearsalCommand } from './abandon-rehearsal-command.handler';
 
 
 class GetMyRehearsalsCommandHandler extends AbstractTelegramCommandHandler {

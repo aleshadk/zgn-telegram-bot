@@ -1,21 +1,17 @@
-import { Context } from 'telegraf';
-
 import { UserRepository } from '../Domain/User/user.repository';
-import { ConfirmRehearsalHandler } from '../handlers/rehearsal-confirmation/confirm-rehearsal.handler';
-import { RejectRehearsalHandler } from '../handlers/rehearsal-confirmation/reject-rehearsal.handler';
-import { GetMyRehearsalsHandler } from '../handlers/user/get-my-rehearsals.handler';
 import { isValidPhone } from '../utils/phoneUtils';
-import { telegramChooseRehearsalDurationHandler } from './commands/booking/telegram-choose-rehearsal-duraion.handler';
-import { telegramChooseRehearsalStartTimeHandler } from './commands/booking/telegram-choose-rehearsal-start-time.handler';
 import { telegramBookReheatsalHandler } from './commands/booking/telegram-book-rehearsal.handler';
 import { handleTelegramChooseRehearsalDateCommand } from './commands/booking/telegram-choose-rehearsal-date.handler';
+import { telegramChooseRehearsalDurationHandler } from './commands/booking/telegram-choose-rehearsal-duraion.handler';
+import { telegramChooseRehearsalStartTimeHandler } from './commands/booking/telegram-choose-rehearsal-start-time.handler';
+import { confirmRehearsalCommandHandler } from './commands/confirmation/telegram-confirm-rehearsal.handler';
+import { rejectRehearsalHandler } from './commands/confirmation/telegram-reject-rehearsal.handler';
 import { abandonRehearsalCommand } from './commands/manage-rehearsals/abandon-rehearsal-command.handler';
+import { getMyRehearsalsHandler } from './commands/manage-rehearsals/get-my-rehearsals-command.handler';
 import { manageMyRehearsalsCommand } from './commands/manage-rehearsals/manage-my-rehearsals-command.handler';
 import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
 import { telegramBot } from './telegramBot';
-import { confirmRehearsalCommandHandler } from './commands/confirmation/telegram-confirm-rehearsal.handler';
-import { rejectRehearsalHandler } from './commands/confirmation/telegram-reject-rehearsal.handler';
-import { getMyRehearsalsHandler } from './commands/manage-rehearsals/get-my-rehearsals-command.handler';
+
 /*
 start_booking - забронировать репетицию
 get_my_rehearsals - посмотреть свои репетиции
@@ -52,17 +48,13 @@ export class TelegramBot { // TODO: rename class
                     return;
                 }
 
-                this.handleMessageFromUserWithoutPhone(ctx);
+                ctx.reply(`Сначала нужен твой телефон, чтобы быть на связи если что-то пойдёт не так`);
                 return;
             }
 
-            ctx.reply(`${ctx.from.first_name} всё настроено!`);
+            telegramBot.telegram.sendSticker(ctx.chat.id, 'CAACAgIAAxkBAAEFJbRiuhAh0LD_sXRlwF0LC75QF8yuCwACqxQAAlZj0Uv2kPeKprHrhSkE');
         });
 
         telegramBot.launch();
-    }
-
-    private handleMessageFromUserWithoutPhone(ctx: Context): void {
-        ctx.telegram.sendMessage(ctx.message!.chat.id, `${ctx.from?.first_name}, чтобы продолжить работу нужно ввести свой телефон`);
     }
 }
