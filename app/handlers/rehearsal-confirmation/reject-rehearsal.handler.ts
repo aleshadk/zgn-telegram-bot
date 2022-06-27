@@ -40,7 +40,6 @@ export class RejectRehearsalHandler {
         bot.telegram.sendMessage(rehearsalCreatedBy.telegramChatId, `❌ Мы не можем обеспечить репетицию ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)}!`);
 
         void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(
-            bot,
             this.getRehearsalRejectdMessage(
                 rehearsalCreatedBy,
                 rehearsal,

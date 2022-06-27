@@ -1,3 +1,4 @@
+import { IRehearsal, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { UserRepository } from '../../Domain/User/user.repository';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
@@ -23,9 +24,26 @@ export class GetMyRehearsalsHandler {
 
         return rehearsals.map(x => {
             return {
-                label: formatRehearsalDateWithDuration(x.startTime, x.endTime),
+                label: this.getRehearsalLabel(x),
                 rehearsalId: x.id,
             }
         });
+    }
+
+    private getRehearsalLabel(rehearsal: IRehearsal): string {
+        return `${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} ${this.getRehearsalStatusLabel(rehearsal)}`
+    }
+
+    private getRehearsalStatusLabel(rehearsal: IRehearsal): string {
+        switch (rehearsal.status) {
+            case RehearsalStatus.Draft:
+                return '🤔 ждёт подтверждения';
+            case RehearsalStatus.Confirmed:
+                return '✅ подтверждена';
+            case RehearsalStatus.Rejected:
+                return '❌ отклонена';
+            case RehearsalStatus.AbandonByUser:
+                    return '❌ отменена';
+        }
     }
 }

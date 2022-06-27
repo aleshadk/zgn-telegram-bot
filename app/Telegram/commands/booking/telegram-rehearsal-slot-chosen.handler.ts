@@ -1,11 +1,9 @@
 import { model } from 'mongoose';
 import { Context } from 'telegraf';
+import { BookRehearsalHandler } from '../../../handlers/rehearsal-booking/book-rehearsal.handler';
+import { SendRehearsalConfirmationMessageToAdminsHandler } from '../../../handlers/rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
+import { IChooseStartTimeCommandModel } from '../../telegram.models';
 
-import { BookRehearsalHandler } from '../../handlers/rehearsal-booking/book-rehearsal.handler';
-import {
-    SendRehearsalConfirmationMessageToAdminsHandler,
-} from '../../handlers/rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
-import { IChooseStartTimeCommandModel } from '../telegram.models';
 import { AbstractTelegramAction } from './abstract-telegram-action.handler';
 
 class TelegramRehearsalSlotChosenHandler extends AbstractTelegramAction<IChooseStartTimeCommandModel> {

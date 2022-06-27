@@ -6,7 +6,8 @@ const __rehearsal_schema_name = 'rehearsal';
 export enum RehearsalStatus {
     Draft,
     Confirmed,
-    Rejected
+    Rejected,
+    AbandonByUser,
 }
 
 export interface IRehearsalSaveModel {

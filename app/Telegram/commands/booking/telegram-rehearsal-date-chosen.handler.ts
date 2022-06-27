@@ -1,10 +1,8 @@
 import { Context } from 'telegraf';
+import { GetAvailableRehearsalDuractionHandler } from '../../../handlers/rehearsal-booking/get-available-rehearsal-duration.handler';
+import { getOneColumnButtons } from '../../../utils/telegramButtonUtilsMarkup';
+import { IChooseDateCommandModel } from '../../telegram.models';
 
-import {
-    GetAvailableRehearsalDuractionHandler,
-} from '../../handlers/rehearsal-booking/get-available-rehearsal-duration.handler';
-import { getOneColumnButtons } from '../../utils/telegramButtonUtilsMarkup';
-import { IChooseDateCommandModel } from '../telegram.models';
 import { AbstractTelegramAction } from './abstract-telegram-action.handler';
 import { telegramRehearsalDurationChosenHandler } from './telegram-rehearsal-duration-chosen.handler';
 

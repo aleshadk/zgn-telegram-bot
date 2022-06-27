@@ -5,13 +5,19 @@ import { ConfirmRehearsalHandler } from '../handlers/rehearsal-confirmation/conf
 import { RejectRehearsalHandler } from '../handlers/rehearsal-confirmation/reject-rehearsal.handler';
 import { GetMyRehearsalsHandler } from '../handlers/user/get-my-rehearsals.handler';
 import { isValidPhone } from '../utils/phoneUtils';
-import { telegramRehearsalDateChosenHandler } from './commands/telegram-rehearsal-date-chosen.handler';
-import { telegramRehearsalDurationChosenHandler } from './commands/telegram-rehearsal-duration-chosen.handler';
-import { telegramRehearsalSlotChosenHandler } from './commands/telegram-rehearsal-slot-chosen.handler';
-import { handleTelegramStartBookingCommand } from './commands/telegram-start-booking-command.handler';
+import { telegramRehearsalDateChosenHandler } from './commands/booking/telegram-rehearsal-date-chosen.handler';
+import { telegramRehearsalDurationChosenHandler } from './commands/booking/telegram-rehearsal-duration-chosen.handler';
+import { telegramRehearsalSlotChosenHandler } from './commands/booking/telegram-rehearsal-slot-chosen.handler';
+import { handleTelegramStartBookingCommand } from './commands/booking/telegram-start-booking-command.handler';
+import { abandonRehearsalCommand } from './commands/manage-rehearsals/abandon-rehearsal-command.handler';
+import { manageMyRehearsalsCommand } from './commands/manage-rehearsals/manage-my-rehearsals-command.handler';
 import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
 import { telegramBot } from './telegramBot';
-
+/*
+start_booking - забронировать репетицию
+get_my_rehearsals - посмотреть свои репетиции
+manage_my_rehearsals - управлять своими репетициями
+*/
 export class TelegramBot { // TODO: rename class
     private readonly userRepository = new UserRepository();
     constructor() {
@@ -34,6 +40,7 @@ export class TelegramBot { // TODO: rename class
             new RejectRehearsalHandler().handle(ctx, telegramBot, rehearsalId);
         });
 
+        // manage
         telegramBot.command('get_my_rehearsals', async ctx => {
             const result = await new GetMyRehearsalsHandler().handle(ctx.from?.id!);
 
@@ -46,6 +53,10 @@ export class TelegramBot { // TODO: rename class
 
             ctx.reply(response);
         });
+
+        telegramBot.command('manage_my_rehearsals', ctx => manageMyRehearsalsCommand.handle(ctx));
+        telegramBot.action(/abandon+/, ctx => abandonRehearsalCommand.handle(ctx, ctx.match.input));
+        
 
         telegramBot.on('text', async (ctx) => {
             const user = await this.userRepository.getUser({ telegramId: ctx.from.id });

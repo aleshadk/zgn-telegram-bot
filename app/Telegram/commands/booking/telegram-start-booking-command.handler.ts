@@ -1,9 +1,7 @@
 import { Context } from 'telegraf';
+import { GetAvailableRehearsalStateDatesHandler } from '../../../handlers/rehearsal-booking/get-available-rehearsal-start-dates.handler';
+import { getOneColumnButtons } from '../../../utils/telegramButtonUtilsMarkup';
 
-import {
-    GetAvailableRehearsalStateDatesHandler,
-} from '../../handlers/rehearsal-booking/get-available-rehearsal-start-dates.handler';
-import { getOneColumnButtons } from '../../utils/telegramButtonUtilsMarkup';
 import { telegramRehearsalDateChosenHandler } from './telegram-rehearsal-date-chosen.handler';
 
 class TelegramStartBookingCommandHandler {

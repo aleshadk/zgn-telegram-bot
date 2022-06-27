@@ -52,8 +52,7 @@ export class ConfirmRehearsalHandler {
         bot.telegram.sendMessage(rehearsalCreatedBy.telegramChatId, `Твоя репетиция ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} подтверждена!`);
 
         void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(
-            bot,
-            this.getRehearsalConfirmedMessage(rehearsalCreatedBy, rehearsal, ctx.message?.from.first_name!)
+            this.getRehearsalConfirmedMessage(rehearsalCreatedBy, rehearsal, ctx.from?.first_name!)
         );
     }
 

@@ -49,3 +49,5 @@ export class UserRepository {
         await UserModel.findOneAndUpdate({telegramId: model.telegramId}, {phone: model.phone});
     }
 }
+
+export const userRepository = new UserRepository();
