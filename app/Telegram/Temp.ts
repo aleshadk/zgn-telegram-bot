@@ -15,6 +15,7 @@ import { handleTelegramStartCommand } from './commands/telegram-start-command.ha
 import { telegramBot } from './telegramBot';
 import { confirmRehearsalCommandHandler } from './commands/confirmation/telegram-confirm-rehearsal.handler';
 import { rejectRehearsalHandler } from './commands/confirmation/telegram-reject-rehearsal.handler';
+import { getMyRehearsalsHandler } from './commands/manage-rehearsals/get-my-rehearsals-command.handler';
 /*
 start_booking - забронировать репетицию
 get_my_rehearsals - посмотреть свои репетиции
@@ -36,19 +37,7 @@ export class TelegramBot { // TODO: rename class
         telegramBot.action(/reject_rehearsal+/, async ctx => rejectRehearsalHandler.handle(ctx, ctx.match.input));
 
         // manage
-        telegramBot.command('get_my_rehearsals', async ctx => {
-            const result = await new GetMyRehearsalsHandler().handle(ctx.from?.id!);
-
-            if (result.length === 0) {
-                ctx.reply('У тебя нет активных репетиций 😱');
-                return;
-            }
-
-            const response = `У тебя есть вот такие репетиции: \n\n${result.map(x => x.label).join('\n')}`;
-
-            ctx.reply(response);
-        });
-
+        telegramBot.command('get_my_rehearsals', async ctx => getMyRehearsalsHandler.handle(ctx));
         telegramBot.command('manage_my_rehearsals', ctx => manageMyRehearsalsCommand.handle(ctx));
         telegramBot.action(/abandon+/, ctx => abandonRehearsalCommand.handle(ctx, ctx.match.input));
         
