@@ -18,7 +18,7 @@ initApp();
 new TelegramBot();
 
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/moh', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
 });
 
