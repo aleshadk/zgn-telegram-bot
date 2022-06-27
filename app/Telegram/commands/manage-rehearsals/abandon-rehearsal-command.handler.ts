@@ -1,5 +1,5 @@
 import { Context } from 'telegraf';
-import { IRehearsal, RehearsalStatus } from '../../../Domain/Rehearsal/rehearsal.model';
+import { IRehearsal, IRehearsalFullModel, RehearsalStatus } from '../../../Domain/Rehearsal/rehearsal.model';
 import { rehearsalRepository, RehearsalRepository } from '../../../Domain/Rehearsal/rehearsal.repository';
 import { IUser } from '../../../Domain/User/user.model';
 import { userRepository } from '../../../Domain/User/user.repository';
@@ -23,9 +23,7 @@ class AbandonRehearsalsCommandHandler {
             return;
         }
 
-        const rehearsalCreatedBy = await userRepository.getUserById(rehearsal?.createdBy as string); // TODO Refactor
-
-        const hasPermissions = rehearsalCreatedBy?.telegramId === ctx.from?.id || user.isAdmin;
+        const hasPermissions = rehearsal.createdBy.telegramId === ctx.from?.id || user.isAdmin;
 
         if (!hasPermissions) {
             return;
@@ -39,9 +37,9 @@ class AbandonRehearsalsCommandHandler {
         }
 
         await rehearsalRepository.changeRehearsalStatus(data.rehearsalId, RehearsalStatus.AbandonByUser);
-        this.sendNotificationsToAdmins(rehearsal!, user, rehearsalCreatedBy!);
+        this.sendNotificationsToAdmins(rehearsal!, user!);
 
-        if (user.telegramId === rehearsalCreatedBy?.telegramId) {
+        if (user.telegramId === rehearsal.createdBy?.telegramId) {
             ctx.reply(`Твоя репетиция ${formatRehearsalDateTime(rehearsal?.startTime!)} отменена`);
         }
 
@@ -62,11 +60,10 @@ class AbandonRehearsalsCommandHandler {
     }
 
     private sendNotificationsToAdmins(
-        rehearsal: IRehearsal,
+        rehearsal: IRehearsalFullModel,
         currentUser: IUser,
-        rehearsalCreatedBy: IUser
     ): void {
-        const message = `❌ ${currentUser.firstName} отменил репетицию ${formatRehearsalDateTime(rehearsal.startTime)} пользователя ${rehearsalCreatedBy.firstName}`;
+        const message = `❌ ${currentUser.firstName} отменил репетицию ${formatRehearsalDateTime(rehearsal.startTime)} пользователя ${rehearsal.createdBy.firstName}`;
         new NotifyAdminAboutRehearsalStatusChangeHandler().handle(message)
     }
 }
