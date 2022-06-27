@@ -1,15 +1,17 @@
 import { Context } from 'telegraf';
-import { GetAvailableRehearsalStartTimeSlotsHandler } from '../../../handlers/rehearsal-booking/get-available-rehearsal-start-time-slots.handler';
+
+import {
+    GetAvailableRehearsalStartTimeSlotsHandler,
+} from '../../../handlers/rehearsal-booking/get-available-rehearsal-start-time-slots.handler';
 import { getOneColumnButtons } from '../../../utils/telegramButtonUtilsMarkup';
-import { IChooseDurationCommandModel } from '../../telegram.models';
+import { AbstractTelegramCommandWithData } from '../abstract-telegram-comand-with-data.handler';
+import { IChooseDurationCommandModel } from './booking.model';
+import { telegramBookReheatsalHandler } from './telegram-book-rehearsal.handler';
 
-import { AbstractTelegramAction } from './abstract-telegram-action.handler';
-import { telegramRehearsalSlotChosenHandler } from './telegram-rehearsal-slot-chosen.handler';
+class TelegramChooseRehearsalStartTimeHanlder extends AbstractTelegramCommandWithData<IChooseDurationCommandModel> {
+    public readonly suffix = 'choose_starttime';
 
-class TelegramRehearsalDurationChosenHandler extends AbstractTelegramAction<IChooseDurationCommandModel> {
-    public readonly suffix = 'durationchosen';
-
-    public async handle(ctx: Context, input: string): Promise<void> {
+    protected async innerHandle(ctx: Context, input: string): Promise<void> {
         const data = this.parseData(input);
 
         const slots = await new GetAvailableRehearsalStartTimeSlotsHandler().handle(data);
@@ -24,7 +26,7 @@ class TelegramRehearsalDurationChosenHandler extends AbstractTelegramAction<ICho
             getOneColumnButtons(
                 slots.map(x => ({
                     label: x,
-                    data: telegramRehearsalSlotChosenHandler.createTelegramComandString({
+                    data: telegramBookReheatsalHandler.createTelegramComandString({
                         ...data,
                         rehearsalStartTime: x,
                     }),
@@ -50,4 +52,4 @@ class TelegramRehearsalDurationChosenHandler extends AbstractTelegramAction<ICho
     }
 }
 
-export const telegramRehearsalDurationChosenHandler = new TelegramRehearsalDurationChosenHandler();
+export const telegramChooseRehearsalStartTimeHandler = new TelegramChooseRehearsalStartTimeHanlder();

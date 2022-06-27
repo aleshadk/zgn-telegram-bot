@@ -14,7 +14,7 @@ export abstract class AbstractTelegramCommandHandler {
         this.queue.add(telegramUserId);
 
         try {
-            await this.innerHandle(ctx);
+            await this.innerHandle(ctx, input);
         } catch (e) {
             console.log('error while processing handler');
             console.log(e);
@@ -24,5 +24,5 @@ export abstract class AbstractTelegramCommandHandler {
 
     }
 
-    protected abstract innerHandle(ctx: Context): Promise<void>;
+    protected abstract innerHandle(ctx: Context, input?: string): Promise<void>;
 }

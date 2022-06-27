@@ -5,10 +5,10 @@ import { ConfirmRehearsalHandler } from '../handlers/rehearsal-confirmation/conf
 import { RejectRehearsalHandler } from '../handlers/rehearsal-confirmation/reject-rehearsal.handler';
 import { GetMyRehearsalsHandler } from '../handlers/user/get-my-rehearsals.handler';
 import { isValidPhone } from '../utils/phoneUtils';
-import { telegramRehearsalDateChosenHandler } from './commands/booking/telegram-rehearsal-date-chosen.handler';
-import { telegramRehearsalDurationChosenHandler } from './commands/booking/telegram-rehearsal-duration-chosen.handler';
-import { telegramRehearsalSlotChosenHandler } from './commands/booking/telegram-rehearsal-slot-chosen.handler';
-import { handleTelegramStartBookingCommand } from './commands/booking/telegram-start-booking-command.handler';
+import { telegramChooseRehearsalDurationHandler } from './commands/booking/telegram-choose-rehearsal-duraion.handler';
+import { telegramChooseRehearsalStartTimeHandler } from './commands/booking/telegram-choose-rehearsal-start-time.handler';
+import { telegramBookReheatsalHandler } from './commands/booking/telegram-book-rehearsal.handler';
+import { handleTelegramChooseRehearsalDateCommand } from './commands/booking/telegram-choose-rehearsal-date.handler';
 import { abandonRehearsalCommand } from './commands/manage-rehearsals/abandon-rehearsal-command.handler';
 import { manageMyRehearsalsCommand } from './commands/manage-rehearsals/manage-my-rehearsals-command.handler';
 import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
@@ -24,10 +24,10 @@ export class TelegramBot { // TODO: rename class
         telegramBot.start(handleTelegramStartCommand);
 
         // booking
-        telegramBot.command('start_booking', handleTelegramStartBookingCommand);
-        telegramBot.action(/datechosen+/, ctx => telegramRehearsalDateChosenHandler.handle(ctx, ctx.match.input));
-        telegramBot.action(/durationchosen+/, ctx => telegramRehearsalDurationChosenHandler.handle(ctx, ctx.match.input));
-        telegramBot.action(/slotchosen+/, ctx => telegramRehearsalSlotChosenHandler.handle(ctx, ctx.match.input));
+        telegramBot.command('start_booking', handleTelegramChooseRehearsalDateCommand);
+        telegramBot.action(/choose_duration+/, ctx => telegramChooseRehearsalDurationHandler.handle(ctx, ctx.match.input));
+        telegramBot.action(/choose_starttime+/, ctx => telegramChooseRehearsalStartTimeHandler.handle(ctx, ctx.match.input));
+        telegramBot.action(/book+/, ctx => telegramBookReheatsalHandler.handle(ctx, ctx.match.input));
 
         // confirmation
         telegramBot.action(/rehearsal_confirmed+/, async ctx => {

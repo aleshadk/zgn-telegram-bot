@@ -1,15 +1,16 @@
-import { model } from 'mongoose';
 import { Context } from 'telegraf';
+
 import { BookRehearsalHandler } from '../../../handlers/rehearsal-booking/book-rehearsal.handler';
-import { SendRehearsalConfirmationMessageToAdminsHandler } from '../../../handlers/rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
-import { IChooseStartTimeCommandModel } from '../../telegram.models';
+import {
+    SendRehearsalConfirmationMessageToAdminsHandler,
+} from '../../../handlers/rehearsal-confirmation/send-rehearsal-confirmation-message-to-admins.handler';
+import { AbstractTelegramCommandWithData } from '../abstract-telegram-comand-with-data.handler';
+import { IChooseStartTimeCommandModel } from './booking.model';
 
-import { AbstractTelegramAction } from './abstract-telegram-action.handler';
+class TelegramBookRehearsalHandler extends AbstractTelegramCommandWithData<IChooseStartTimeCommandModel> {
+    public readonly suffix = 'book';
 
-class TelegramRehearsalSlotChosenHandler extends AbstractTelegramAction<IChooseStartTimeCommandModel> {
-    public readonly suffix = 'slotchosen';
-
-    public async handle(ctx: Context, input: string): Promise<void> {
+    protected async innerHandle(ctx: Context, input: string): Promise<void> {
         const data = this.parseData(input);
         const result = await new BookRehearsalHandler().handle({
             ...data,
@@ -41,4 +42,4 @@ class TelegramRehearsalSlotChosenHandler extends AbstractTelegramAction<IChooseS
     }
 }
 
-export const telegramRehearsalSlotChosenHandler = new TelegramRehearsalSlotChosenHandler();
+export const telegramBookReheatsalHandler = new TelegramBookRehearsalHandler();
