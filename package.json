@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app/index.js",
+    "start": "node index.js",
+    "build": "tsc",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
-    "mongo": "~/mongodb/bin/mongod",
-    "mongo2": "~/mongodb/bin/mongo"
+    "deploy": "npm run build && cp package.json dist/package.json && gh-pages -d dist -b prod-build"
+  },
+  "engines": {
+    "node": "16.x"
   },
   "keywords": [],
   "author": "",

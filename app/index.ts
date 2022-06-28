@@ -9,18 +9,14 @@ const app = express();
 const port = process.env.PORT;
 
 
-app.get('/', (req: Request, res: Response) => {
-    res.send(process.env.EXAMPLE);
-  });
+app.get('/', (_req: Request, res: Response) => {
+  res.send('I am working');
+});
 
 dotenv.config();
 initApp();
 new TelegramBot();
 
-
-app.get('/moh', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
-});
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
