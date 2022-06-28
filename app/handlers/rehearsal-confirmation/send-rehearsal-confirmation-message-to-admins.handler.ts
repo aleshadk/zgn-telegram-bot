@@ -8,30 +8,29 @@ import { getTwoColumnsButtons } from '../../utils/telegramButtonUtilsMarkup';
 
 
 export class SendRehearsalConfirmationMessageToAdminsHandler {
-    private readonly userRepository = new UserRepository;
+  private readonly userRepository = new UserRepository;
 
-    public async handle(rehearsal: IRehearsal ): Promise<void> {
-        const admins = await this.userRepository.getAdminUsers();
-                const message = this.getMessage(rehearsal);
+  public async handle(rehearsal: IRehearsal): Promise<void> {
+    const admins = await this.userRepository.getAdminUsers();
+    const message = this.getMessage(rehearsal);
 
-        admins.forEach(x => {
-            telegramBot.telegram.sendMessage(
-                x.telegramChatId,
-                message,
-                getTwoColumnsButtons([
-                    {label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramComandString({rehearsalId: rehearsal.id})},
-                    {label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramComandString({rehearsalId: rehearsal.id})},
-                ])
-            )
-        })
-    }
+    admins.forEach(x => {
+      telegramBot.telegram.sendMessage(
+        x.telegramChatId,
+        message,
+        getTwoColumnsButtons([
+          { label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramComandString({ rehearsalId: rehearsal.id }) },
+          { label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramComandString({ rehearsalId: rehearsal.id }) },
+        ])
+      );
+    });
+  }
 
-    private getMessage(rehearsal: IRehearsal): string {
-        const userName = rehearsal.createdBy.firstName;
-        const phone = rehearsal.createdBy.phone;
-        const rehearsalData = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
+  private getMessage(rehearsal: IRehearsal): string {
+    const userName = rehearsal.createdBy.firstName;
+    const phone = rehearsal.createdBy.phone;
+    const rehearsalData = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
 
-        return `${userName} (тел. ${phone}) хочет забронировать репетицию ${rehearsalData}`;
-    }
-
+    return `${userName} (тел. ${phone}) хочет забронировать репетицию ${rehearsalData}`;
+  }
 }

@@ -5,7 +5,7 @@ import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 import { NotifyAdminAboutRehearsalStatusChangeHandler } from './notify-admin-about-rehearsal-status-change.handler';
 
 export class ConfirmRehearsalHandler {
-  private readonly rehearsalRepository = new RehearsalRepository;;
+  private readonly rehearsalRepository = new RehearsalRepository;
 
   public async handle(
     rehearsalId: string,
