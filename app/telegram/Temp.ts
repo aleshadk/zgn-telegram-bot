@@ -10,7 +10,7 @@ import { abandonRehearsalCommand } from './commands/manage-rehearsals/abandon-re
 import { getMyRehearsalsHandler } from './commands/manage-rehearsals/get-my-rehearsals-command.handler';
 import { manageMyRehearsalsCommand } from './commands/manage-rehearsals/manage-my-rehearsals-command.handler';
 import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
-import { telegramBot } from './sidr';
+import { telegramBot } from './telegramBot';
 
 /*
 start_booking - забронировать репетицию

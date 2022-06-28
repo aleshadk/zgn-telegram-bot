@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 
 import { initApp } from './app.initializer';
-import { TelegramBot } from './moh/Temp';
+import { TelegramBot } from './telegram/Temp';
 
 
 const app = express();
