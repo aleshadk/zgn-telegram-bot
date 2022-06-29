@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log('ENV', process.env.NODE_ENV);
+
 export const appEnvironment = {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   mongoConnectionString: process.env.MONGO_CONNECTION_STRING!,
