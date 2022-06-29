@@ -1,7 +1,7 @@
+import { Markup } from 'telegraf';
 import { UserRepository } from '../Domain/User/user.repository';
-import { isValidPhone } from '../utils/phoneUtils';
 import { telegramBookReheatsalHandler } from './commands/booking/telegram-book-rehearsal.handler';
-import { handleTelegramChooseRehearsalDateCommand } from './commands/booking/telegram-choose-rehearsal-date.handler';
+import { telegramChooseRehearsalDateHandler } from './commands/booking/telegram-choose-rehearsal-date.handler';
 import { telegramChooseRehearsalDurationHandler } from './commands/booking/telegram-choose-rehearsal-duraion.handler';
 import { telegramChooseRehearsalStartTimeHandler } from './commands/booking/telegram-choose-rehearsal-start-time.handler';
 import { confirmRehearsalCommandHandler } from './commands/confirmation/telegram-confirm-rehearsal.handler';
@@ -9,7 +9,7 @@ import { rejectRehearsalHandler } from './commands/confirmation/telegram-reject-
 import { abandonRehearsalCommand } from './commands/manage-rehearsals/abandon-rehearsal-command.handler';
 import { getMyRehearsalsHandler } from './commands/manage-rehearsals/get-my-rehearsals-command.handler';
 import { manageMyRehearsalsCommand } from './commands/manage-rehearsals/manage-my-rehearsals-command.handler';
-import { handleTelegramStartCommand } from './commands/telegram-start-command.handler';
+import { handleTelegramContactReceived } from './commands/user/telegram-register-user.handler';
 import { telegramBot } from './telegramBot';
 
 /*
@@ -20,10 +20,19 @@ manage_my_rehearsals - управлять своими репетициями
 export class TelegramBot { // TODO: rename class
   private readonly userRepository = new UserRepository();
   constructor() {
-    telegramBot.start(handleTelegramStartCommand);
+    telegramBot.start(ctx => {
+      // TODO: нужно проверку на то, что пользователь зарегистрирован
+
+      return ctx.reply(
+        'Отправь нам свой контакт, чтобы можно с тобой было быстро связаться',
+        Markup.keyboard([
+          Markup.button.contactRequest('Поделиться своим контактом'),
+        ]).resize()
+      );
+    });
 
     // booking
-    telegramBot.command('start_booking', handleTelegramChooseRehearsalDateCommand);
+    telegramBot.command(telegramChooseRehearsalDateHandler.command, ctx => telegramChooseRehearsalDateHandler.handle(ctx));
     telegramBot.action(/choose_duration+/, ctx => telegramChooseRehearsalDurationHandler.handle(ctx, ctx.match.input));
     telegramBot.action(/choose_starttime+/, ctx => telegramChooseRehearsalStartTimeHandler.handle(ctx, ctx.match.input));
     telegramBot.action(/book+/, ctx => telegramBookReheatsalHandler.handle(ctx, ctx.match.input));
@@ -37,24 +46,19 @@ export class TelegramBot { // TODO: rename class
     telegramBot.command('manage_my_rehearsals', ctx => manageMyRehearsalsCommand.handle(ctx));
     telegramBot.action(/abandon+/, ctx => abandonRehearsalCommand.handle(ctx, ctx.match.input));
 
+    telegramBot.on('contact', ctx => handleTelegramContactReceived(ctx, ctx.update.message.contact));
 
     telegramBot.on('text', async (ctx) => {
-      const user = await this.userRepository.getUser({ telegramId: ctx.from.id });
+      console.log(ctx.message.text);
 
-      if (!user?.phone) {
-        if (isValidPhone(ctx.message.text)) {
-          await this.userRepository.update({ telegramId: ctx.from.id, phone: ctx.message.text });
-          ctx.reply(`${ctx.from.first_name} всё настроено!`);
-          return;
-        }
-
-        ctx.reply('Сначала нужен твой телефон, чтобы быть на связи если что-то пойдёт не так');
+      if (ctx.message.text === 'Забронировать репетицию') {
+        telegramChooseRehearsalDateHandler.handle(ctx);
         return;
-      }
+      } 
 
-      telegramBot.telegram.sendSticker(ctx.chat.id, 'CAACAgIAAxkBAAEFJbRiuhAh0LD_sXRlwF0LC75QF8yuCwACqxQAAlZj0Uv2kPeKprHrhSkE');
+      telegramBot.telegram.sendSticker(ctx.chat!.id, 'CAACAgIAAxkBAAEFJbRiuhAh0LD_sXRlwF0LC75QF8yuCwACqxQAAlZj0Uv2kPeKprHrhSkE');
     });
-
+ 
     telegramBot.launch();
   }
 }

@@ -9,7 +9,7 @@ class WebServerAvoidSleepingJob {
       return;
     }
 
-    const url = `https://${ip.address()}:${appEnvironment.port}`;
+    const url = `http://${ip.address()}:${appEnvironment.port}`;
     console.log('runnig avoid sleeping job for ', url);
     setInterval(() => http.get(url), this.timeout);
   }
