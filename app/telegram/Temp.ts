@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf';
-import { UserRepository } from '../Domain/User/user.repository';
+
 import { telegramBookReheatsalHandler } from './commands/booking/telegram-book-rehearsal.handler';
 import { telegramChooseRehearsalDateHandler } from './commands/booking/telegram-choose-rehearsal-date.handler';
 import { telegramChooseRehearsalDurationHandler } from './commands/booking/telegram-choose-rehearsal-duraion.handler';
@@ -18,7 +18,6 @@ get_my_rehearsals - посмотреть свои репетиции
 manage_my_rehearsals - управлять своими репетициями
 */
 export class TelegramBot { // TODO: rename class
-  private readonly userRepository = new UserRepository();
   constructor() {
     telegramBot.start(ctx => {
       // TODO: нужно проверку на то, что пользователь зарегистрирован
