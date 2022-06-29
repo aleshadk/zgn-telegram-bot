@@ -9,5 +9,5 @@ export const appEnvironment = {
   telegramBotToken: process.env.TELEGRAM_BOT_TOKEN!,
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   port: process.env.PORT!,
-  prod: process.env.NODE_ENV === 'prod'
+  prod: process.env.NODE_ENV === 'production'
 };
