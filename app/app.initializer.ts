@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { appEnvironment } from './app.environment';
+import { webServerAvoidSleeping } from './jobs/web-server-avoid-sleep.job';
 
 async function initMongo(): Promise<void> {
   const MONGO_OPTIONS = {
@@ -22,5 +23,6 @@ async function initMongo(): Promise<void> {
 
 export async function initApp(): Promise<void> {
   await initMongo();
+  webServerAvoidSleeping.runJob();
   console.log('App started');
 }
