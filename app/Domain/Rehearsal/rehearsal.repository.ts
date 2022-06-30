@@ -1,12 +1,10 @@
 import { formatISO } from 'date-fns';
-import { model } from 'mongoose';
 
 import { IUser } from '../User/user.model';
 import { Rehearsal } from './rehearsal.entity';
 import {
   IRehearsal,
   IRehearsalFullModel,
-  IRehearsalModel,
   IRehearsalSaveModel,
   RehearsalModel,
   RehearsalStatus,
@@ -17,7 +15,6 @@ export class RehearsalRepository {
     const result = RehearsalModel.find().exec();
     return result;
   }
-
   public createRehearsal(saveModel: IRehearsalSaveModel): Promise<IRehearsal> {
     const rehearsal = new RehearsalModel(saveModel);
 

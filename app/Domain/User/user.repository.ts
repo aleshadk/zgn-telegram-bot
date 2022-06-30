@@ -1,53 +1,56 @@
-import {ICreateUserModel, UserModel, IUser, IGetUserModel, IUpdateUserModel} from './user.model';
+import { ICreateUserModel, UserModel, IUser, IGetUserModel, IUpdateUserModel } from './user.model';
 
 export class UserRepository {
-    public getAllUsers(): Promise<IUser[]> {
-        const result = UserModel.find().exec();
-        result.catch(e => console.log(e));
+  public getAllUsers(): Promise<IUser[]> {
+    const result = UserModel.find().exec();
+    result.catch(e => console.log(e));
 
-        return result;
-    }
+    return result;
+  }
 
-    public getUser(model: IGetUserModel): Promise<IUser | undefined> {
-        return new Promise<IUser | undefined>((resolve) => {
-            UserModel.findOne(model)
-                .then(user => resolve(user || undefined))
-                .catch(error => {
-                    console.log(error);
-                    resolve(undefined);
-                })
-            })
-        
-    }
+  public isUserRegistered(telegramId: number): Promise<boolean> {
+    return UserModel.count({telegramId})
+      .then(count => count > 0);
+  }
 
-    public async getUserById(id: string): Promise<IUser | null> {
-        return await UserModel.findById(id);
-    }
+  public getUser(model: IGetUserModel): Promise<IUser | undefined> {
+    return new Promise<IUser | undefined>((resolve) => {
+      UserModel.findOne(model)
+        .then(user => resolve(user || undefined))
+        .catch(error => {
+          console.log(error);
+          resolve(undefined);
+        });
+    });
+  }
+  public async getUserById(id: string): Promise<IUser | null> {
+    return await UserModel.findById(id);
+  }
 
-    public async getAdminUsers(): Promise<IUser[]> {
-        return await UserModel.find({isAdmin: true});
-    }
+  public async getAdminUsers(): Promise<IUser[]> {
+    return await UserModel.find({ isAdmin: true });
+  }
 
-    public createUser(model: ICreateUserModel): Promise<IUser> {
-        const user = new UserModel(model);
-        user._id;
+  public createUser(model: ICreateUserModel): Promise<IUser> {
+    const user = new UserModel(model);
+    user._id;
 
-        return new Promise<IUser>((resolve, reject) => {
-            user.save(error => {
-                if (error) {
-                    console.log(error);
-                    reject();
-                    return;
-                }
+    return new Promise<IUser>((resolve, reject) => {
+      user.save(error => {
+        if (error) {
+          console.log(error);
+          reject();
+          return;
+        }
 
-                resolve(user);
-            })
-        })
-    }
+        resolve(user);
+      });
+    });
+  }
 
-    public async update(model: IUpdateUserModel): Promise<void> { // TODO: remove void
-        await UserModel.findOneAndUpdate({telegramId: model.telegramId}, {phone: model.phone});
-    }
+  public async update(model: IUpdateUserModel): Promise<void> { // TODO: remove void
+    await UserModel.findOneAndUpdate({ telegramId: model.telegramId }, { phone: model.phone });
+  }
 }
 
 export const userRepository = new UserRepository();

@@ -1,4 +1,5 @@
 import { Context, Markup } from 'telegraf';
+import { userRepository } from '../Domain/User/user.repository';
 
 import { telegramBookReheatsalHandler } from './commands/booking/telegram-book-rehearsal.handler';
 import { telegramChooseRehearsalDateHandler } from './commands/booking/telegram-choose-rehearsal-date.handler';
@@ -19,8 +20,22 @@ manage_my_rehearsals - управлять своими репетициями
 */
 export class TelegramListener {
   constructor() {
-    telegramBot.use((ctx, next) => {
-      console.log('middle where', ctx.message);
+    telegramBot.use(async (ctx, next) => {
+      // TODO: avoid try-catch
+      const isStartMessage = (ctx.update as { message?: { text?: string } })?.message?.text === '/start';
+      const isShareContactMessage = (ctx.update as { message?: { contact?: unknown } })?.message?.contact !== undefined;
+
+      if (isStartMessage || isShareContactMessage) {
+        return next();
+      }
+
+      const userTelegramId = ctx.from?.id;
+
+      if (!userTelegramId || !await userRepository.isUserRegistered(userTelegramId)) {
+        ctx.reply('Чтобы забронировать репетицию в Загон запусти команду /start');
+        return;
+      }
+
       return next();
     });
 
