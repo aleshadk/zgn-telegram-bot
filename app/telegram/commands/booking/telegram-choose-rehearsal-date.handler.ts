@@ -9,6 +9,7 @@ import { telegramChooseRehearsalDurationHandler } from './telegram-choose-rehear
 
 class TelegramChooseRehearsalDateHandler extends AbstractTelegramCommandHandler {
   public readonly command = 'start_booking';
+  public readonly textCommand = 'Забронировать репетицию'; // TODO: 
   protected async innerHandle(ctx: Context): Promise<void> {
     const daysToSchedule = new GetAvailableRehearsalStateDatesHandler().handle();
 

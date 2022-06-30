@@ -7,7 +7,8 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
-    "deploy": "npm run build && cp package.json dist/package.json && gh-pages -d dist -b prod-build"
+    "deploy": "npm run build && cp package.json dist/package.json && gh-pages -d dist -b prod-build",
+    "dev-mongo": "~/mongodb/bin/mongod"
   },
   "engines": {
     "node": "16.x"

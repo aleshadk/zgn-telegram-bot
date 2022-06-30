@@ -11,31 +11,22 @@ import { telegramChooseRehearsalStartTimeHandler } from './telegram-choose-rehea
 class TelegramChooseRehearsalDurationHandler extends AbstractTelegramCommandWithData<IChooseDateCommandModel> {
   public readonly suffix = 'choose_duration';
 
-  protected innerHandle(ctx: Context, input: string): Promise<void> {
-    return new Promise(async resolve => {
-      const data = this.parseData(input);
-      const durations = new GetAvailableRehearsalDuractionHandler().handle();
+  protected async innerHandle(ctx: Context, input: string): Promise<void> {
+    const data = this.parseData(input);
+    const durations = new GetAvailableRehearsalDuractionHandler().handle();
 
-      setTimeout(() => {
-        ctx.reply(
-          'Выбери длительность репетиции',
-          getOneColumnButtons(
-            durations.map(x => ({
-              label: `${x} ч.`,
-              data: telegramChooseRehearsalStartTimeHandler.createTelegramComandString({
-                ...data,
-                rehearsalDuration: x
-              }),
-            }))
-          )
-        );
-
-        resolve();
-      }, 5000)
-    })
-
-
-
+    ctx.reply(
+      'Выбери длительность репетиции',
+      getOneColumnButtons(
+        durations.map(x => ({
+          label: `${x} ч.`,
+          data: telegramChooseRehearsalStartTimeHandler.createTelegramComandString({
+            ...data,
+            rehearsalDuration: x
+          }),
+        }))
+      )
+    );
   }
 
   public createTelegramComandString(model: IChooseDateCommandModel): string {
@@ -46,10 +37,11 @@ class TelegramChooseRehearsalDurationHandler extends AbstractTelegramCommandWith
   }
 
   public parseData(input: string): IChooseDateCommandModel {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     const [_, rehearsalDate] = input.split('__');
     return {
       rehearsalDate: new Date(parseInt(rehearsalDate))
-    }
+    };
   }
 }
 

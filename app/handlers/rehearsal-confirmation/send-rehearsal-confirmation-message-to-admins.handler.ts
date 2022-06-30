@@ -2,7 +2,7 @@ import { IRehearsal } from '../../Domain/Rehearsal/rehearsal.model';
 import { UserRepository } from '../../Domain/User/user.repository';
 import { confirmRehearsalCommandHandler } from '../../telegram/commands/confirmation/telegram-confirm-rehearsal.handler';
 import { rejectRehearsalHandler } from '../../telegram/commands/confirmation/telegram-reject-rehearsal.handler';
-import { telegramBot } from '../../telegram/telegramBot';
+import { telegramBot } from '../../telegram/telegram-bot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 import { getTwoColumnsButtons } from '../../utils/telegramButtonUtilsMarkup';
 

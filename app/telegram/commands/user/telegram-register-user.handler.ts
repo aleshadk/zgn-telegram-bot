@@ -2,8 +2,9 @@ import { Context, Markup } from 'telegraf';
 import { Contact } from 'telegraf/typings/core/types/typegram';
 
 import { UserRepository } from '../../../Domain/User/user.repository';
-import { telegramBot } from '../../telegramBot';
-
+import { telegramBot } from '../../telegram-bot';
+import { telegramChooseRehearsalDateHandler } from '../booking/telegram-choose-rehearsal-date.handler';
+import { telegramGetMyRehearsalsHandler } from '../manage-rehearsals/get-my-rehearsals-command.handler';
 
 class TelegramContactReceivedHandler {
   private readonly userRepository = new UserRepository;
@@ -51,7 +52,10 @@ class TelegramContactReceivedHandler {
     ctx.reply(
       'У тебя всё настроено 🤟\nТеперь можно бронировать репетицию',
       Markup.keyboard([
-        Markup.button.callback('Забронировать репетицию', 'Забронировать репетицию'), // TODO:
+        Markup.button.text(telegramChooseRehearsalDateHandler.textCommand),
+        Markup.button.text(telegramGetMyRehearsalsHandler.textCommand)
+        
+        // TODO:
       ]).resize()
     );
   }

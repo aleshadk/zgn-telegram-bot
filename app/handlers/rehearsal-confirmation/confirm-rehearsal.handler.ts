@@ -1,6 +1,6 @@
 import { IRehearsalFullModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
-import { telegramBot } from '../../telegram/telegramBot';
+import { telegramBot } from '../../telegram/telegram-bot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 import { NotifyAdminAboutRehearsalStatusChangeHandler } from './notify-admin-about-rehearsal-status-change.handler';
 
