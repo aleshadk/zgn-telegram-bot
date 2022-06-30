@@ -15,9 +15,12 @@ class TelegramGetMyRehearsalsHandler extends AbstractTelegramCommandHandler {
       return;
     }
 
-    const response = `У тебя есть вот такие репетиции: \n\n${result.map(x => x.label).join('\n')}`;
+    const markup = [
+      'Твои репетиции:\n\n',
+      ...result.map(x => `    <b>${x.getLabelWithStatus()}</b>\n`)
+    ];
 
-    ctx.reply(response);
+    ctx.replyWithHTML(markup.join(''));
   }
 }
 

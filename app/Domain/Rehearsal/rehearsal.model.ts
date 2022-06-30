@@ -2,11 +2,19 @@ import mongoose, { Document, Schema } from 'mongoose';
 import { IUser, __user_schema_name } from '../User/user.model';
 
 const __rehearsal_schema_name = 'rehearsal';
+
 export enum RehearsalStatus {
   Draft,
   Confirmed,
   Rejected,
   AbandonByUser,
+}
+
+export interface IRehearsalModel {
+  _id: string;
+  startTime: Date;
+  endTime: Date;
+  status: RehearsalStatus;
 }
 
 export interface IRehearsalFullModel {

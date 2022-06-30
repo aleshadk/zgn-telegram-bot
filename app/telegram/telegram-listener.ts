@@ -19,6 +19,11 @@ manage_my_rehearsals - управлять своими репетициями
 */
 export class TelegramListener {
   constructor() {
+    telegramBot.use((ctx, next) => {
+      console.log('middle where', ctx.message);
+      return next();
+    });
+
     // user
     telegramBot.start(async ctx => this.onStart(ctx));
     telegramBot.on('contact', async ctx => handleTelegramContactReceived(ctx, ctx.update.message.contact));
@@ -40,7 +45,7 @@ export class TelegramListener {
 
     // default
     telegramBot.on('text', async ctx => this.onMessage(ctx, ctx.message.text));
- 
+
     telegramBot.launch();
   }
 
@@ -62,6 +67,9 @@ export class TelegramListener {
         return;
       case telegramGetMyRehearsalsHandler.textCommand:
         telegramGetMyRehearsalsHandler.handle(ctx);
+        return;
+      case manageMyRehearsalsCommand.textCommand:
+        manageMyRehearsalsCommand.handle(ctx);
         return;
       default:
         telegramBot.telegram.sendSticker(ctx.chat!.id, 'CAACAgIAAxkBAAEFJbRiuhAh0LD_sXRlwF0LC75QF8yuCwACqxQAAlZj0Uv2kPeKprHrhSkE');

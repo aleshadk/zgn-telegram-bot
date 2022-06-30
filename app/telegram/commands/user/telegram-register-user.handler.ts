@@ -5,6 +5,7 @@ import { UserRepository } from '../../../Domain/User/user.repository';
 import { telegramBot } from '../../telegram-bot';
 import { telegramChooseRehearsalDateHandler } from '../booking/telegram-choose-rehearsal-date.handler';
 import { telegramGetMyRehearsalsHandler } from '../manage-rehearsals/get-my-rehearsals-command.handler';
+import { manageMyRehearsalsCommand } from '../manage-rehearsals/manage-my-rehearsals-command.handler';
 
 class TelegramContactReceivedHandler {
   private readonly userRepository = new UserRepository;
@@ -53,8 +54,8 @@ class TelegramContactReceivedHandler {
       'У тебя всё настроено 🤟\nТеперь можно бронировать репетицию',
       Markup.keyboard([
         Markup.button.text(telegramChooseRehearsalDateHandler.textCommand),
-        Markup.button.text(telegramGetMyRehearsalsHandler.textCommand)
-        
+        Markup.button.text(telegramGetMyRehearsalsHandler.textCommand),
+        Markup.button.text(manageMyRehearsalsCommand.textCommand)
         // TODO:
       ]).resize()
     );

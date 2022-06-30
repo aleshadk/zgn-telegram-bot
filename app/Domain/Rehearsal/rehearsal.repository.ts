@@ -1,7 +1,16 @@
 import { formatISO } from 'date-fns';
+import { model } from 'mongoose';
 
 import { IUser } from '../User/user.model';
-import { IRehearsal, IRehearsalFullModel, IRehearsalSaveModel, RehearsalModel, RehearsalStatus } from './rehearsal.model';
+import { Rehearsal } from './rehearsal.entity';
+import {
+  IRehearsal,
+  IRehearsalFullModel,
+  IRehearsalModel,
+  IRehearsalSaveModel,
+  RehearsalModel,
+  RehearsalStatus,
+} from './rehearsal.model';
 
 export class RehearsalRepository {
   public getAllRehearsals(): Promise<IRehearsal[]> {
@@ -33,13 +42,19 @@ export class RehearsalRepository {
     return await RehearsalModel.findByIdAndUpdate(rehearsalId, { status });
   }
 
-  public async getUserActiveRehearsals(user: IUser): Promise<IRehearsal[]> {
-    return await RehearsalModel.find({
-      createdBy: user,
-      endTime: {
-        $gt: formatISO(new Date())
-      }
-    });
+  public async getUserActiveRehearsals(user: IUser): Promise<Rehearsal[]> {
+    const models = await RehearsalModel
+      .find({
+        createdBy: user,
+        endTime: {
+          $gt: formatISO(new Date())
+        }
+      })
+      .sort({
+        startTime: 1,
+      });
+
+    return models.map(x => new Rehearsal(x));
   }
 
   // TODO: плохое название
