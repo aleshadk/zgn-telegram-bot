@@ -19,7 +19,7 @@ class TelegramConfirmRehearsalHandler extends AbstractTelegramCommandWithData<ID
         }
     }
 
-    public createTelegramComandString(model: IData): string {
+    public createTelegramCommandString(model: IData): string {
         return [
             this.suffix,
             model.rehearsalId

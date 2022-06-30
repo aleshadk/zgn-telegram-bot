@@ -37,4 +37,8 @@ export class Rehearsal {
         return '❌';
     }
   }
+
+  public isActive(): boolean {
+    return [RehearsalStatus.Confirmed, RehearsalStatus.Draft].includes(this.status);
+  }
 }

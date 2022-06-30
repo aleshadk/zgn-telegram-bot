@@ -20,7 +20,7 @@ class TelegramChooseRehearsalDurationHandler extends AbstractTelegramCommandWith
       getOneColumnButtons(
         durations.map(x => ({
           label: `${x} ч.`,
-          data: telegramChooseRehearsalStartTimeHandler.createTelegramComandString({
+          data: telegramChooseRehearsalStartTimeHandler.createTelegramCommandString({
             ...data,
             rehearsalDuration: x
           }),
@@ -29,7 +29,7 @@ class TelegramChooseRehearsalDurationHandler extends AbstractTelegramCommandWith
     );
   }
 
-  public createTelegramComandString(model: IChooseDateCommandModel): string {
+  public createTelegramCommandString(model: IChooseDateCommandModel): string {
     return [
       this.suffix,
       model.rehearsalDate.getTime()

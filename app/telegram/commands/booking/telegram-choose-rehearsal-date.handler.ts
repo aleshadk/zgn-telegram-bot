@@ -17,7 +17,7 @@ class TelegramChooseRehearsalDateHandler extends AbstractTelegramCommandHandler 
       'Выбери день репетиции',
       getOneColumnButtons(
         daysToSchedule.map(x => ({
-          data: telegramChooseRehearsalDurationHandler.createTelegramComandString({ rehearsalDate: x.value }),
+          data: telegramChooseRehearsalDurationHandler.createTelegramCommandString({ rehearsalDate: x.value }),
           label: x.label
         }))
       )

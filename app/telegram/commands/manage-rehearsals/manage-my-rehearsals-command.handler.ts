@@ -1,4 +1,5 @@
 import { Context } from 'telegraf';
+
 import { GetMyRehearsalsHandler } from '../../../handlers/user/get-my-rehearsals.handler';
 import { getOneColumnButtons } from '../../../utils/telegramButtonUtilsMarkup';
 import { abandonRehearsalCommand } from './abandon-rehearsal-command.handler';
@@ -16,11 +17,11 @@ class ManageMyRehearsalsCommandHandler {
     }
 
     ctx.reply(
-      'У тебя сейчас есть вот такие репетиции',
+      'Хотел бы ',
       getOneColumnButtons(
-        result.map(x => ({
+        result.filter(x => x.isActive()).map(x => ({
           label: `Отменить ${x.getLabelWithStatus()}`,
-          data: abandonRehearsalCommand.createTelegramComandString({ rehearsalId: x.id }),
+          data: abandonRehearsalCommand.createTelegramCommandString({ rehearsalId: x.id }),
         }))
       )
     );

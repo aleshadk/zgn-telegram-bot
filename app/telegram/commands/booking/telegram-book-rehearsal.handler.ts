@@ -17,7 +17,7 @@ class TelegramBookRehearsalHandler extends AbstractTelegramCommandWithData<IChoo
     ctx.reply(result.message);
   }
 
-  public createTelegramComandString(model: IChooseStartTimeCommandModel): string {
+  public createTelegramCommandString(model: IChooseStartTimeCommandModel): string {
     return [
       this.suffix,
       model.rehearsalDate.getTime(),

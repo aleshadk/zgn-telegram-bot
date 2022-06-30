@@ -26,7 +26,7 @@ class TelegramChooseRehearsalStartTimeHanlder extends AbstractTelegramCommandWit
       getOneColumnButtons(
         slots.map(x => ({
           label: x,
-          data: telegramBookReheatsalHandler.createTelegramComandString({
+          data: telegramBookReheatsalHandler.createTelegramCommandString({
             ...data,
             rehearsalStartTime: x,
           }),
@@ -35,7 +35,7 @@ class TelegramChooseRehearsalStartTimeHanlder extends AbstractTelegramCommandWit
     );
   }
 
-  public createTelegramComandString(model: IChooseDurationCommandModel): string {
+  public createTelegramCommandString(model: IChooseDurationCommandModel): string {
     return [
       this.suffix,
       model.rehearsalDate.getTime(),

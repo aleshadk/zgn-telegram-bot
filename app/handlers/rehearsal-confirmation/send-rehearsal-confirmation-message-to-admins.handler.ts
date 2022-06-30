@@ -19,8 +19,8 @@ export class SendRehearsalConfirmationMessageToAdminsHandler {
         x.telegramChatId,
         message,
         getTwoColumnsButtons([
-          { label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramComandString({ rehearsalId: rehearsal.id }) },
-          { label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramComandString({ rehearsalId: rehearsal.id }) },
+          { label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramCommandString({ rehearsalId: rehearsal.id }) },
+          { label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramCommandString({ rehearsalId: rehearsal.id }) },
         ])
       );
     });
