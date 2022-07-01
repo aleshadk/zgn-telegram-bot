@@ -1,40 +1,218 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
+  "root": true,
+  "ignorePatterns": ["**/generated/*.ts", "**/app/svg/"],
+  "plugins": ["prettier"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@angular-eslint/all",
+        "plugin:@angular-eslint/recommended--extra",
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "eqeqeq": ["error", "smart"],
+        "curly": ["error", "all"],
+        "no-return-assign": ["error", "always"],
+        "lines-between-class-members": [
+          "error",
+          "always",
+          {
+            "exceptAfterSingleLine": true
+          }
+        ],
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine": "auto"
+          }
+        ],
+        "@typescript-eslint/prefer-readonly": "error",
+        "@typescript-eslint/explicit-function-return-type": [
+          "error",
+          {
+            "allowExpressions": true
+          }
+        ],
+        "@typescript-eslint/explicit-member-accessibility": [
+          "error",
+          {
+            "accessibility": "explicit",
+            "overrides": {
+              "accessors": "explicit",
+              "constructors": "off",
+              "methods": "explicit",
+              "properties": "explicit",
+              "parameterProperties": "explicit"
+            }
+          }
+        ],
+        "@typescript-eslint/member-ordering": [
+          "error",
+          {
+            "default": [
+              // Index signature
+              "signature",
+              "call-signature",
+
+              // Static
+              "public-static-get",
+              "protected-static-get",
+              "private-static-get",
+
+              "public-static-set",
+              "protected-static-set",
+              "private-static-set",
+
+              "static-get",
+              "static-set",
+
+              "public-static-field",
+              "protected-static-field",
+              "private-static-field",
+
+              "static-field",
+              "instance-field",
+              "abstract-field",
+
+              // Static methods
+              "public-static-method",
+              "protected-static-method",
+              "private-static-method",
+
+              "static-method",
+
+              // Decorated
+              "decorated-field",
+              "decorated-set",
+              "decorated-get",
+
+              // Getters
+              "public-instance-get",
+              "protected-instance-get",
+              "private-instance-get",
+
+              "public-abstract-get",
+              "protected-abstract-get",
+              "private-abstract-get",
+
+              "public-get",
+              "protected-get",
+              "private-get",
+
+              "instance-get",
+              "abstract-get",
+
+              "get",
+
+              // Setters
+
+              "public-instance-set",
+              "protected-instance-set",
+              "private-instance-set",
+
+              "public-abstract-set",
+              "protected-abstract-set",
+              "private-abstract-set",
+
+              "public-set",
+              "protected-set",
+              "private-set",
+
+              "instance-set",
+              "abstract-set",
+
+              "set",
+
+              // Fields
+
+              "public-instance-field",
+              "protected-instance-field",
+              "private-instance-field",
+
+              "public-abstract-field",
+              "protected-abstract-field",
+              "private-abstract-field",
+
+              "public-field",
+              "protected-field",
+              "private-field",
+
+              "field",
+
+              // Constructors
+              "public-constructor",
+              "protected-constructor",
+              "private-constructor",
+
+              "constructor",
+
+              // Methods
+
+              "public-decorated-method",
+              "protected-decorated-method",
+              "private-decorated-method",
+
+              "public-instance-method",
+              "protected-instance-method",
+              "private-instance-method",
+
+              "public-abstract-method",
+              "protected-abstract-method",
+              "private-abstract-method",
+
+              "public-method",
+              "protected-method",
+              "private-method",
+
+              "instance-method",
+              "abstract-method",
+
+              "decorated-method",
+
+              "method"
+            ]
+          }
+        ],
+        "@angular-eslint/sort-ngmodule-metadata-arrays": "off",
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/no-forward-ref": "off",
+        "@angular-eslint/use-injectable-provided-in": ["off"],
+        "@typescript-eslint/unbound-method": [
+          "error",
+          {
+            "ignoreStatic": true
+          }
+        ]
+      }
     },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "indent": [
-            "error",
-            2,
-            { "SwitchCase": 1 }
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "no-unused-vars": [
-            "error",
-            { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"]
     }
+  ]
 }
