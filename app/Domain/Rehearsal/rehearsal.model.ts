@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { IUser, __user_schema_name } from '../User/user.model';
+import { IUser } from '../User/user.model';
+import { USER_SCHEMA_NAME } from '../User/user.repository';
 
 const __rehearsal_schema_name = 'rehearsal';
 
@@ -39,7 +40,7 @@ const RehearsalSchema: Schema = new Schema(
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     status: { type: Number, required: true },
-    createdBy: { type: Schema.Types.ObjectId, ref: __user_schema_name },
+    createdBy: { type: Schema.Types.ObjectId, ref: USER_SCHEMA_NAME },
   },
   {
     timestamps: true

@@ -65,8 +65,6 @@ export class TelegramListener {
   }
 
   private onStart(ctx: Context): void {
-    // TODO: нужно проверку на то, что пользователь зарегистрирован
-
     ctx.reply(
       'Отправь нам свой контакт, чтобы можно с тобой было быстро связаться',
       Markup.keyboard([

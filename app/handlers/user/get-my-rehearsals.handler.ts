@@ -8,7 +8,7 @@ export class GetMyRehearsalsHandler {
   private readonly userRepository = new UserRepository;
 
   public async handle(userTelegramId: number): Promise<Rehearsal[]> {
-    const user = await this.userRepository.getUser({ telegramId: userTelegramId });
+    const user = await this.userRepository.getUserByTelegramId(userTelegramId);
     if (!user) {
       return [];
     }

@@ -18,13 +18,12 @@ export class BookRehearsalHandler {
   private readonly rehearsalRepository = new RehearsalRepository;
   private readonly userRepository = new UserRepository;
 
-
   public async handle(data: { userTelegramId: number, rehearsalDate: Date, rehearsalDuration: number, rehearsalStartTime: string, }): Promise<IHandlerResult> {
-    const user = await this.userRepository.getUser({ telegramId: data.userTelegramId });
+    const user = await this.userRepository.getUserByTelegramId(data.userTelegramId);
     const startTime = this.calculateStartTime(data.rehearsalDate, data.rehearsalStartTime);
     const endTime = this.calculateEndTime(startTime, data.rehearsalDuration);
 
-    const error = await this.validate(user, startTime, endTime);
+    const error = await this.validate(user!, startTime, endTime);
 
     if (error) {
       return {

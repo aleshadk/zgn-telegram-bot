@@ -18,7 +18,7 @@ class TelegramContactReceivedHandler {
       return;
     }
 
-    const user = await this.userRepository.getUser({ telegramId: userTelegramId });
+    const user = await this.userRepository.getUserByTelegramId(userTelegramId);
 
     if (user) {
       this.replySuccess(ctx);

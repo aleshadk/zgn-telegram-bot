@@ -19,7 +19,7 @@ class AbandonRehearsalsCommandHandler {
   public async handle(ctx: Context, input: string): Promise<void> {
     const data = this.parseData(input);
 
-    const user = await userRepository.getUser({ telegramId: ctx.from?.id });
+    const user = await userRepository.getUserByTelegramId(ctx.from?.id);
     const rehearsal = await rehearsalRepository.getRehearsalById(data.rehearsalId);
 
     if (!user || !rehearsal) {
