@@ -1,3 +1,5 @@
+![Тут лого загона](https://github.com/aleshadk/zgn-telegram-bot/blob/main/zagon.png?raw=true)
+
 # Загон телеграм-бот
 
 ## Зачем
