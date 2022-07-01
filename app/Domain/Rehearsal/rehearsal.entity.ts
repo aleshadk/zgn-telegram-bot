@@ -1,5 +1,5 @@
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
-import { IRehearsalModel, RehearsalStatus } from './rehearsal.model';
+import { IRehearsal, RehearsalStatus } from './rehearsal.model';
 
 export class Rehearsal {
   public readonly id: string;
@@ -7,7 +7,7 @@ export class Rehearsal {
   public readonly endTime: Date;
   public readonly status: RehearsalStatus;
 
-  constructor(model: IRehearsalModel) {
+  constructor(model: IRehearsal) {
     this.id = model._id;
     this.startTime = model.startTime;
     this.endTime = model.endTime;

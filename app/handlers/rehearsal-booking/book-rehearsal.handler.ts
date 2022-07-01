@@ -1,6 +1,6 @@
 import { addHours, isPast } from 'date-fns';
 
-import { IRehearsal, IRehearsalSaveModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
+import { IRehearsal, ICreateRehearsalModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { IUser } from '../../Domain/User/user.model';
 import { UserRepository } from '../../Domain/User/user.repository';
@@ -32,7 +32,7 @@ export class BookRehearsalHandler {
       };
     }
 
-    const saveModel: IRehearsalSaveModel = {
+    const saveModel: ICreateRehearsalModel = {
       createdBy: user!,
       endTime,
       startTime,

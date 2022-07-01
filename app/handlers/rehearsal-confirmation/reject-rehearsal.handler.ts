@@ -1,4 +1,4 @@
-import { IRehearsalFullModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
+import { IRehearsalFull, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { telegramBot } from '../../telegram/telegram-bot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
@@ -33,7 +33,7 @@ export class RejectRehearsalHandler {
 
 
   private async notifyAdmins(
-    rehearsal: IRehearsalFullModel,
+    rehearsal: IRehearsalFull,
     confirmedByTelegramName: string,
   ): Promise<void> {
     const rehearsalDateTime = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
@@ -42,7 +42,7 @@ export class RejectRehearsalHandler {
     void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(message);
   }
 
-  private notifyRehearsalOwner(rehearsal: IRehearsalFullModel): void {
+  private notifyRehearsalOwner(rehearsal: IRehearsalFull): void {
     telegramBot.telegram.sendMessage(
       rehearsal.createdBy.telegramChatId,
       `❌ Мы не можем обеспечить репетицию ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)}!`

@@ -1,21 +1,34 @@
 import { formatISO } from 'date-fns';
+import mongoose, { Schema } from 'mongoose';
 
 import { IUser } from '../User/user.model';
+import { USER_SCHEMA_NAME } from '../User/user.repository';
 import { Rehearsal } from './rehearsal.entity';
 import {
   IRehearsal,
-  IRehearsalFullModel,
-  IRehearsalSaveModel,
-  RehearsalModel,
+  IRehearsalFull,
+  ICreateRehearsalModel,
   RehearsalStatus,
 } from './rehearsal.model';
 
-export class RehearsalRepository {
-  public getAllRehearsals(): Promise<IRehearsal[]> {
-    const result = RehearsalModel.find().exec();
-    return result;
+const REHEARSAL_SCHEMA_NAME = 'rehearsal';
+
+const RehearsalSchema: Schema = new Schema(
+  {
+    startTime: { type: Date, required: true },
+    endTime: { type: Date, required: true },
+    status: { type: Number, required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: USER_SCHEMA_NAME },
+  },
+  {
+    timestamps: true
   }
-  public createRehearsal(saveModel: IRehearsalSaveModel): Promise<IRehearsal> {
+);
+
+const RehearsalModel = mongoose.model<IRehearsal>(REHEARSAL_SCHEMA_NAME, RehearsalSchema);
+
+export class RehearsalRepository {
+  public createRehearsal(saveModel: ICreateRehearsalModel): Promise<IRehearsal> {
     const rehearsal = new RehearsalModel(saveModel);
 
     return new Promise<IRehearsal>((resolve, reject) => {
@@ -30,7 +43,7 @@ export class RehearsalRepository {
     });
   }
 
-  public async getRehearsalById(rehearsalId: string): Promise<IRehearsalFullModel | null> {
+  public async getRehearsalById(rehearsalId: string): Promise<IRehearsalFull | null> {
     return await RehearsalModel.findById(rehearsalId)
       .populate('createdBy');
   }

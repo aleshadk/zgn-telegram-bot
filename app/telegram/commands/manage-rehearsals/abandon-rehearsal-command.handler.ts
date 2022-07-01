@@ -1,6 +1,6 @@
 import { Context } from 'telegraf';
 
-import { IRehearsalFullModel, RehearsalStatus } from '../../../Domain/Rehearsal/rehearsal.model';
+import { IRehearsalFull, RehearsalStatus } from '../../../Domain/Rehearsal/rehearsal.model';
 import { rehearsalRepository } from '../../../Domain/Rehearsal/rehearsal.repository';
 import { IUser } from '../../../Domain/User/user.model';
 import { userRepository } from '../../../Domain/User/user.repository';
@@ -63,7 +63,7 @@ class AbandonRehearsalsCommandHandler {
   }
 
   private sendNotificationsToAdmins(
-    rehearsal: IRehearsalFullModel,
+    rehearsal: IRehearsalFull,
     currentUser: IUser,
   ): void {
     const message = `❌ ${currentUser.firstName} отменил репетицию ${formatRehearsalDateTime(rehearsal.startTime)} пользователя ${rehearsal.createdBy.firstName}`;
