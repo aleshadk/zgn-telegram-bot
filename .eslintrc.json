@@ -1,6 +1,5 @@
 {
   "root": true,
-  "ignorePatterns": ["**/generated/*.ts", "**/app/svg/"],
   "plugins": ["prettier"],
   "overrides": [
     {
@@ -13,9 +12,6 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:@angular-eslint/all",
-        "plugin:@angular-eslint/recommended--extra",
-        "plugin:@angular-eslint/template/process-inline-templates",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:prettier/recommended"
       ],
@@ -183,25 +179,6 @@
             ]
           }
         ],
-        "@angular-eslint/sort-ngmodule-metadata-arrays": "off",
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "type": "attribute",
-            "prefix": "app",
-            "style": "camelCase"
-          }
-        ],
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "prefix": "app",
-            "style": "kebab-case"
-          }
-        ],
-        "@angular-eslint/no-forward-ref": "off",
-        "@angular-eslint/use-injectable-provided-in": ["off"],
         "@typescript-eslint/unbound-method": [
           "error",
           {
@@ -209,10 +186,6 @@
           }
         ]
       }
-    },
-    {
-      "files": ["*.html"],
-      "extends": ["plugin:@angular-eslint/template/recommended"]
     }
   ]
 }

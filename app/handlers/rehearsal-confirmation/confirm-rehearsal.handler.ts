@@ -1,7 +1,7 @@
-import { IRehearsalFull, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
+import { RehearsalFull } from '../../Domain/Rehearsal/rehearsal.entity';
+import { RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { telegramBot } from '../../telegram/telegram-bot';
-import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 import { NotifyAdminAboutRehearsalStatusChangeHandler } from './notify-admin-about-rehearsal-status-change.handler';
 
 export class ConfirmRehearsalHandler {
@@ -11,6 +11,7 @@ export class ConfirmRehearsalHandler {
     rehearsalId: string,
     currentUserTelegramName: string,
   ): Promise<string | undefined> {
+    // TODO: check admin permissions
     const rehearsal = await this.rehearsalRepository.getRehearsalById(rehearsalId);
 
     if (!rehearsal) {
@@ -45,19 +46,17 @@ export class ConfirmRehearsalHandler {
   }
 
   private async notifyAdmins(
-    rehearsal: IRehearsalFull,
+    rehearsal: RehearsalFull,
     confirmedBy: string,
   ): Promise<void> {
-    const rehearsalDateTime = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
-    const message = `✅ Репетицию ${rehearsal.createdBy.firstName} (тел. ${rehearsal.createdBy.phone}) ${rehearsalDateTime} подтвердил ${confirmedBy}`;
-
+    const message = `✅ Репетицию ${rehearsal.createdBy.firstName} (тел. ${rehearsal.createdBy.phone}) ${rehearsal.getLabel()} подтвердил ${confirmedBy}`;
     void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(message);
   }
 
-  private notifyRehearsalOwner(rehearsal: IRehearsalFull): void {
+  private notifyRehearsalOwner(rehearsal: RehearsalFull): void {
     telegramBot.telegram.sendMessage(
       rehearsal.createdBy.telegramChatId,
-      `Твоя репетиция ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)} подтверждена!`
+      `Твоя репетиция ${rehearsal.getLabel()} подтверждена!`
     );
   }
 }

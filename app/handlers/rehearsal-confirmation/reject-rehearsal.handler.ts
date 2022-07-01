@@ -1,4 +1,5 @@
-import { IRehearsalFull, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
+import { RehearsalFull } from '../../Domain/Rehearsal/rehearsal.entity';
+import { RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { telegramBot } from '../../telegram/telegram-bot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
@@ -11,14 +12,15 @@ export class RejectRehearsalHandler {
     rehearsalId: string,
     currentUserTelegramName: string,
   ): Promise<string | undefined> {
+    // TODO: check admin permissions
     const rehearsal = await this.rehearsalRepository.getRehearsalById(rehearsalId);
 
     if (!rehearsal) {
       return;
     }
 
-    if (rehearsal.status === RehearsalStatus.Rejected) {
-      return 'Эту репетицию и так уже кто-то отклонил';
+    if (!rehearsal.isActive()) {
+      return 'Эта репетиция и так не активна';
     }
 
     const updatedRehearsal = await this.rehearsalRepository.changeRehearsalStatus(rehearsalId, RehearsalStatus.Rejected);
@@ -33,19 +35,19 @@ export class RejectRehearsalHandler {
 
 
   private async notifyAdmins(
-    rehearsal: IRehearsalFull,
-    confirmedByTelegramName: string,
+    rehearsal: RehearsalFull,
+    rejectedByTelegramName: string,
   ): Promise<void> {
     const rehearsalDateTime = formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime);
-    const message = `❌❌❌ Репетицию ${rehearsal.createdBy.firstName} (тел. ${rehearsal.createdBy.phone}) ${rehearsalDateTime} отклонил ${confirmedByTelegramName}`;
+    const message = `❌❌❌ Репетицию ${rehearsal.createdBy.firstName} (тел. ${rehearsal.createdBy.phone}) ${rehearsalDateTime} отклонил ${rejectedByTelegramName}`;
 
     void new NotifyAdminAboutRehearsalStatusChangeHandler().handle(message);
   }
 
-  private notifyRehearsalOwner(rehearsal: IRehearsalFull): void {
+  private notifyRehearsalOwner(rehearsal: RehearsalFull): void {
     telegramBot.telegram.sendMessage(
       rehearsal.createdBy.telegramChatId,
-      `❌ Мы не можем обеспечить репетицию ${formatRehearsalDateWithDuration(rehearsal.startTime, rehearsal.endTime)}!`
+      `❌ Мы не можем обеспечить репетицию ${rehearsal.getLabel()})}!`
     );
   }
 }

@@ -1,5 +1,7 @@
+import { telegramBot } from '../../telegram/telegram-bot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
-import { IRehearsal, RehearsalStatus } from './rehearsal.model';
+import { IUser } from '../User/user.model';
+import { IRehearsal, IRehearsalFull, RehearsalStatus } from './rehearsal.model';
 
 export class Rehearsal {
   public readonly id: string;
@@ -40,5 +42,25 @@ export class Rehearsal {
 
   public isActive(): boolean {
     return [RehearsalStatus.Confirmed, RehearsalStatus.Draft].includes(this.status);
+  }
+
+  public isRejected(): boolean {
+    return this.status === RehearsalStatus.Rejected;
+  }
+}
+
+export class RehearsalFull extends Rehearsal {
+  public readonly createdBy: IUser;
+  constructor(model: IRehearsalFull) {
+    super(model);
+    this.createdBy = model.createdBy;
+  }
+
+  public isCreatedBy(userTelegramId?: number): boolean {
+    if (!userTelegramId) {
+      return false;
+    }
+
+    return this.createdBy.telegramId === userTelegramId;
   }
 }

@@ -3,7 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 
 import { IUser } from '../User/user.model';
 import { USER_SCHEMA_NAME } from '../User/user.repository';
-import { Rehearsal } from './rehearsal.entity';
+import { Rehearsal, RehearsalFull } from './rehearsal.entity';
 import {
   IRehearsal,
   IRehearsalFull,
@@ -43,9 +43,10 @@ export class RehearsalRepository {
     });
   }
 
-  public async getRehearsalById(rehearsalId: string): Promise<IRehearsalFull | null> {
-    return await RehearsalModel.findById(rehearsalId)
-      .populate('createdBy');
+  public async getRehearsalById(rehearsalId: string): Promise<RehearsalFull | null> {
+    return await RehearsalModel.findById<IRehearsalFull>(rehearsalId)
+      .populate('createdBy')
+      .then(x => x ? new RehearsalFull(x) : null);
   }
 
   public async changeRehearsalStatus(rehearsalId: string, status: RehearsalStatus): Promise<IRehearsal | null> {
@@ -67,9 +68,9 @@ export class RehearsalRepository {
     return models.map(x => new Rehearsal(x));
   }
 
-  // TODO: плохое название
+  // TODO: bad naming
   public async getActiveRehearsalsInConflictWithSlot(from: Date, to: Date): Promise<IRehearsal[]> {
-    // TODO: можно переписать на метод exists
+    // TODO: can use exists method
     return new Promise<IRehearsal[]>((resolve) => {
       const statuses = [
         RehearsalStatus.Draft,

@@ -1,11 +1,11 @@
 export interface IChooseDateCommandModel {
-    rehearsalDate: Date; 
+  rehearsalDate: Date;
 }
 
 export interface IChooseDurationCommandModel extends IChooseDateCommandModel {
-    rehearsalDuration: number; 
+  rehearsalDuration: number;
 }
 
 export interface IChooseStartTimeCommandModel extends IChooseDurationCommandModel {
-    rehearsalStartTime: string; 
+  rehearsalStartTime: string;
 }
