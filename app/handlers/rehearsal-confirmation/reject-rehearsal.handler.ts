@@ -47,7 +47,7 @@ export class RejectRehearsalHandler {
   private notifyRehearsalOwner(rehearsal: RehearsalFull): void {
     telegramBot.telegram.sendMessage(
       rehearsal.createdBy.telegramChatId,
-      `❌ Мы не можем обеспечить репетицию ${rehearsal.getLabel()})}!`
+      `❌ Мы не можем обеспечить репетицию ${rehearsal.getLabel()}`
     );
   }
 }

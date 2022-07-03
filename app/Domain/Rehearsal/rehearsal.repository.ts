@@ -28,19 +28,10 @@ const RehearsalSchema: Schema = new Schema(
 const RehearsalModel = mongoose.model<IRehearsal>(REHEARSAL_SCHEMA_NAME, RehearsalSchema);
 
 export class RehearsalRepository {
-  public createRehearsal(saveModel: ICreateRehearsalModel): Promise<IRehearsal> {
+  public async createRehearsal(saveModel: ICreateRehearsalModel): Promise<RehearsalFull> {
     const rehearsal = new RehearsalModel(saveModel);
-
-    return new Promise<IRehearsal>((resolve, reject) => {
-      rehearsal.save(error => {
-        if (error) {
-          reject();
-          return;
-        }
-
-        resolve(rehearsal);
-      });
-    });
+    await rehearsal.save();
+    return new RehearsalFull(rehearsal);
   }
 
   public async getRehearsalById(rehearsalId: string): Promise<RehearsalFull | null> {

@@ -1,4 +1,3 @@
-import { telegramBot } from '../../telegram/telegram-bot';
 import { formatRehearsalDateWithDuration } from '../../utils/dateUtils';
 import { IUser } from '../User/user.model';
 import { IRehearsal, IRehearsalFull, RehearsalStatus } from './rehearsal.model';

@@ -1,5 +1,6 @@
+import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
+
 import { RehearsalFull } from '../../Domain/Rehearsal/rehearsal.entity';
-import { IUser } from '../../Domain/User/user.model';
 import { UserRepository } from '../../Domain/User/user.repository';
 import { confirmRehearsalCommandHandler } from '../../telegram/commands/confirmation/telegram-confirm-rehearsal.handler';
 import { rejectRehearsalHandler } from '../../telegram/commands/confirmation/telegram-reject-rehearsal.handler';
@@ -12,20 +13,24 @@ export class SendRehearsalConfirmationMessageToAdminsHandler {
 
   public async handle(rehearsal: RehearsalFull): Promise<void> {
     const admins = await this.userRepository.getAdminUsers();
-    const message = this.getMessage(rehearsal);
 
-    admins.forEach(x => this.notify(x, message));
+    const message = this.getMessage(rehearsal);
+    const buttons = this.getButtons(rehearsal);
+
+    admins.forEach(x => {
+      telegramBot.telegram.sendMessage(
+        x.telegramChatId,
+        message,
+        buttons,
+      );
+    });
   }
 
-  private notify(user: IUser, message: string): void {
-    telegramBot.telegram.sendMessage(
-      user.telegramChatId,
-      message,
-      getTwoColumnsButtons([
-        { label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramCommandString({ rehearsalId: rehearsal.id }) },
-        { label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramCommandString({ rehearsalId: rehearsal.id }) },
-      ])
-    );
+  private getButtons(rehearsal: RehearsalFull): ExtraReplyMessage {
+    return getTwoColumnsButtons([
+      { label: '✅ Подтвердить', data: confirmRehearsalCommandHandler.createTelegramCommandString({ rehearsalId: rehearsal.id }) },
+      { label: '❌ Отклонить', data: rejectRehearsalHandler.createTelegramCommandString({ rehearsalId: rehearsal.id }) },
+    ])
   }
 
   private getMessage(rehearsal: RehearsalFull): string {

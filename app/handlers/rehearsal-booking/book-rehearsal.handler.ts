@@ -1,6 +1,7 @@
 import { addHours, isPast } from 'date-fns';
 
-import { IRehearsal, ICreateRehearsalModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
+import { RehearsalFull } from '../../Domain/Rehearsal/rehearsal.entity';
+import { ICreateRehearsalModel, RehearsalStatus } from '../../Domain/Rehearsal/rehearsal.model';
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { IUser } from '../../Domain/User/user.model';
 import { UserRepository } from '../../Domain/User/user.repository';
@@ -11,7 +12,7 @@ import {
 
 interface IHandlerResult {
   message: string;
-  rehearsal: IRehearsal | null;
+  rehearsal: RehearsalFull | null;
 }
 
 export class BookRehearsalHandler {
