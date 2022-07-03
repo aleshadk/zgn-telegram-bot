@@ -1,4 +1,5 @@
 import { addDays, addHours, isToday } from 'date-fns';
+import { IRehearsal } from '../../Domain/Rehearsal/rehearsal.model';
 
 import { RehearsalRepository } from '../../Domain/Rehearsal/rehearsal.repository';
 import { getNextHour } from '../../utils/dateUtils';
@@ -11,12 +12,9 @@ export class GetAvailableRehearsalStartTimeSlotsHandler {
   // May be put into FreeSlotCalculateService?
   public async handle(data: { rehearsalDate: Date, rehearsalDuration: number }): Promise<string[]> {
     const rehearsalDate = data.rehearsalDate;
-    const duration = data.rehearsalDuration;
+    const rehearsalDuration = data.rehearsalDuration;
 
-    const nextDayAfterRehearsalStart = addDays(rehearsalDate, 1);
-    const maxPossibleRehearsalEndTIme = addHours(nextDayAfterRehearsalStart, data.rehearsalDuration - 1);
-
-    const existedRehearsals = await this.rehearsalRepository.getActiveRehearsalsInConflictWithSlot(rehearsalDate, maxPossibleRehearsalEndTIme);
+    const existedRehearsals = await this.getExistedRehearsalsForCurrentDate(rehearsalDate);
 
     const availableSlots: string[] = [];
 
@@ -25,7 +23,7 @@ export class GetAvailableRehearsalStartTimeSlotsHandler {
       : ZAGON_CONFIG.START_HOUR;
 
     for (startHour; startHour <= ZAGON_CONFIG.END_HOUR; startHour++) {
-      const currentSlotEndTime = startHour + duration;
+      const currentSlotEndTime = startHour + rehearsalDuration;
       if (currentSlotEndTime > ZAGON_CONFIG.END_HOUR) {
         continue;
       }
@@ -33,7 +31,7 @@ export class GetAvailableRehearsalStartTimeSlotsHandler {
       const slot = `${startHour}:00`;
 
       const start = this.getSlotStartTime(rehearsalDate, slot);
-      const end = this.getSlotEndTime(start, duration);
+      const end = this.getSlotEndTime(start, rehearsalDuration);
 
       const hasConflictRehearsal = existedRehearsals.some(r => {
         // Если есть репетиция, которая начинается позже начала слота, но при этом не раньше конца слота, то слот недоступен
@@ -69,6 +67,14 @@ export class GetAvailableRehearsalStartTimeSlotsHandler {
     }
 
     return availableSlots;
+  }
+
+  /**
+   * @return all existed 
+   */
+  private getExistedRehearsalsForCurrentDate(rehearsalStartDate: Date): Promise<IRehearsal[]> {
+    const nextDayAfterRehearsalStart = addDays(rehearsalStartDate, 1); // This is the date without hours
+    return this.rehearsalRepository.getActiveRehearsalsInConflictWithSlot(rehearsalStartDate, nextDayAfterRehearsalStart);
   }
 
   private getSlotStartTime(date: Date, startTime: string): Date {
