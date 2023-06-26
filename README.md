@@ -1,3 +1,38 @@
+### Bot for telegram messenger that provides online rehearsal booking in music studio Zagon 🤟 [Загон](https://vk.com/zagondubna)
+
+<p align="center">
+  <img src="https://github.com/aleshadk/zgn-telegram-bot/blob/main/zagon.png?raw=true" alt="Sublime's custom image"/>
+</p>
+
+### **Technologies**
+- ts-node
+- telegraf
+- mongoose
+
+### **CJM**
+
+**Registration**
+- user sends `/start`
+- user sends his own contact data
+- user can see controls to book new rehearsal or manage existed
+
+**Booking**
+- user clicks `Book a rehearsal` and select session duration and date he'd like visit a studio 
+- user can see available slots for this date and duration
+- user click on slot to create a rehearsal in status 'Not confirmed by studio'
+
+**Rehearsal status**
+- Administrator can recieve a message that new rehearsal was booked
+- Administrator can approve or decline new rehearsal
+- Administrator can decline rehearsal that previously was approved by another administator
+- Administrator can receive a message that rehearsal was approved/rejected by another administrator
+- User can get a message that rehearsal was approved or declined
+
+**User and existing rehearsals**
+- User can see all comming rehearsals with statuses ⏳, ✅ или ❌
+- User can abandone his rehearsal. Administrator will receive a message. This slot will be available for other users
+
+
 ### Телеграм-бот для брони слотов в репетиционной точке 🤟 [Загон](https://vk.com/zagondubna)
 
 <p align="center">
