@@ -1,4 +1,4 @@
-### Bot for telegram messenger that provides online rehearsal booking in music studio Zagon 🤟 [Загон](https://vk.com/zagondubna)
+### Bot for telegram messenger that provides online rehearsal booking in music studio [Zagon](https://vk.com/zagondubna) 🤟
 
 <p align="center">
   <img src="https://github.com/aleshadk/zgn-telegram-bot/blob/main/zagon.png?raw=true" alt="Sublime's custom image"/>
@@ -33,11 +33,7 @@
 - User can abandone his rehearsal. Administrator will receive a message. This slot will be available for other users
 
 
-### Телеграм-бот для брони слотов в репетиционной точке 🤟 [Загон](https://vk.com/zagondubna)
-
-<p align="center">
-  <img src="https://github.com/aleshadk/zgn-telegram-bot/blob/main/zagon.png?raw=true" alt="Sublime's custom image"/>
-</p>
+### Телеграм-бот для брони слотов в репетиционной точке [Загон](https://vk.com/zagondubna) 🤟
 
 ### **Стек**
 - ts-node
