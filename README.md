@@ -17,9 +17,9 @@
 - user can see controls to book new rehearsal or manage existed
 
 **Booking**
-- user clicks `Book a rehearsal` and select session duration and date he'd like visit a studio 
-- user can see available slots for this date and duration
-- user click on slot to create a rehearsal in status 'Not confirmed by studio'
+- user clicks `Book a rehearsal` and select session duration and date he'd like to visit a studio 
+- user can see available slots
+- user clicks on slot to create a rehearsal in status 'Not confirmed by the studio'
 
 **Rehearsal status**
 - Administrator can recieve a message that new rehearsal was booked
@@ -29,7 +29,7 @@
 - User can get a message that rehearsal was approved or declined
 
 **User and existing rehearsals**
-- User can see all comming rehearsals with statuses ⏳, ✅ или ❌
+- User can see all upcoming rehearsals with statuses ⏳, ✅ or ❌
 - User can abandone his rehearsal. Administrator will receive a message. This slot will be available for other users
 
 
